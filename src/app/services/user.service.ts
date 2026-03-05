@@ -63,6 +63,10 @@ export class UserService {
     localStorage.setItem('email', data.email);
     localStorage.setItem('firstName', data.firstName);
     localStorage.setItem('token', data.token);
+    // Salviamo anche il ruolo restituito dal backend, cosi il frontend puo capire se l'utente e admin anche dopo un refresh della pagina.
+    if (data.user?.role) {
+      localStorage.setItem('role', data.user.role);
+    }
   }
 
   // Legge il token salvato nel browser.
@@ -80,6 +84,11 @@ export class UserService {
     return localStorage.getItem('firstName');
   }
 
+  // Restituisce il ruolo salvato dopo il login. Serve per controlli come isAdmin(), redirect o visibilita di parti della UI.
+  getRole(): string | null {
+    return localStorage.getItem('role');
+  }
+
   // Se esiste un token, consideriamo l'utente loggato.
   isLoggedIn(): boolean {
     return !!this.getToken();
@@ -90,5 +99,7 @@ export class UserService {
     localStorage.removeItem('email');
     localStorage.removeItem('firstName');
     localStorage.removeItem('token');
+    // Quando esco, rimuovo anche il ruolo per evitare che restino dati della sessione precedente nel browser.
+    localStorage.removeItem('role');
   }
 }

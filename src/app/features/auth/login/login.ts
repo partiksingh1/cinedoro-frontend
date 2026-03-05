@@ -51,7 +51,13 @@ export class Login {
       )
       .subscribe({
         // Se il login va a buon fine, reindirizziamo l'utente.
-        next: () => {
+        next: (response) => {
+          // SE E' ADMIN !!!
+          if (response.user?.role === 'admin') {
+            void this.router.navigate(['/admin']);
+            return;
+          }
+
           void this.router.navigate(['/films']);
         },
         // Se il backend risponde con errore, mostriamo un messaggio semplice.
