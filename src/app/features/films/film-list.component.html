@@ -1,0 +1,35 @@
+<div class="container mt-4">
+
+    <h2>Movies</h2>
+
+    <div class="row">
+
+        <div class="col-md-4" *ngFor="let film of films$ | async">
+
+            <div class="card mb-3">
+
+                <div class="card-body">
+
+                    <h5>{{ film.title }}</h5>
+
+                    <p>{{ film.description }}</p>
+
+                    <p>
+                        Duration: {{ film.durationMinutes }} min
+                    </p>
+                    <!-- 
+                    <button class="btn btn-primary">
+                        View
+                    </button> -->
+                    <button class="btn btn-primary" [routerLink]="['/screenings/film', film.id]">
+                        View Screenings
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

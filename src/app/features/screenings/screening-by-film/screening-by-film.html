@@ -1,0 +1,15 @@
+<h2>Screenings</h2>
+
+<div *ngFor="let screening of screenings$ | async" class="screening-card">
+
+    <p>Date: {{screening.screeningDate}}</p>
+
+    <p>Time: {{screening.screeningTime}}</p>
+
+    <p>Price: {{screening.basePrice}} €</p>
+
+    <button>
+        Book
+    </button>
+
+</div>
