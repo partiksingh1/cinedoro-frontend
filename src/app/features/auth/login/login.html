@@ -1,1 +1,37 @@
-<p>login works!</p>
+<section class="login-container">
+  <h2>Login</h2>
+
+  <!-- ngSubmit chiama onSubmit() quando il form viene inviato. -->
+  <form (ngSubmit)="onSubmit()">
+    <div>
+      <label for="email">Email</label>
+      <!-- [(ngModel)] collega l'input alla proprieta email del componente. -->
+      <input
+        id="email"
+        name="email"
+        type="email"
+        [(ngModel)]="email"
+        placeholder="Inserisci la tua email"
+      />
+    </div>
+
+    <div>
+      <label for="password">Password</label>
+      <input
+        id="password"
+        name="password"
+        type="password"
+        [(ngModel)]="password"
+        placeholder="Inserisci la tua password"
+      />
+    </div>
+
+    @if (errorMessage) {
+      <p>{{ errorMessage }}</p>
+    }
+
+    <button type="submit" [disabled]="isLoading">
+      {{ isLoading ? 'Accesso in corso...' : 'Accedi' }}
+    </button>
+  </form>
+</section>
