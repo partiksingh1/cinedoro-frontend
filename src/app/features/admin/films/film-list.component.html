@@ -2,6 +2,9 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
 
         <h2>Movies</h2>
+        <button class="btn btn-success" routerLink="/admin/films/create">
+            Create Movie
+        </button>
 
     </div>
 
@@ -25,6 +28,14 @@
 
                         <button class="btn btn-primary" [routerLink]="['/screenings/film', film.id]">
                             View Screenings
+                        </button>
+
+                        <button class="btn btn-warning" [routerLink]="['/admin/films/edit', film.id]">
+                            Edit
+                        </button>
+
+                        <button class="btn btn-danger" (click)="deleteFilm(film.id!)">
+                            Delete
                         </button>
 
                     </div>

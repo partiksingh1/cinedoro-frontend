@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core'
-import { FilmService } from '../../services/film.service'
-import { Film } from '../../models/film'
 import { CommonModule } from '@angular/common'
 import { Observable } from 'rxjs'
 import { RouterModule } from "@angular/router";
+import { FilmService } from '../../../services/film.service';
+import { Film } from '../../../models/film';
 
 @Component({
     standalone: true,
@@ -11,7 +11,7 @@ import { RouterModule } from "@angular/router";
     imports: [CommonModule, RouterModule],
     templateUrl: './film-list.component.html'
 })
-export class FilmListComponent {
+export class AdminFilmListComponent {
 
     films$: Observable<Film[]>;
 
