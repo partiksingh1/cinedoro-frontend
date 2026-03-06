@@ -1,32 +1,60 @@
-<div *ngIf="bookingData$ | async as data">
-    <h2>{{ data.film.title }} - {{ data.screening.screeningDate }} at {{ data.screening.screeningTime?.substring(0,5) }}
+@if (bookingData$ | async; as data) {
+  <div>
+    <h2>
+      {{ data.film.title }} - {{ data.screening.screeningDate }} at
+      {{ data.screening.screeningTime.substring(0, 5) }}
     </h2>
 
     <!-- Seats -->
-    <div *ngFor="let row of getSeatsByRow(data.seats) | keyvalue" class="seat-row">
+    @for (row of getSeatsByRow(data.seats) | keyvalue; track row.key) {
+      <div class="seat-row">
         <span>Row {{ row.key }}</span>
-        <button *ngFor="let seat of row.value" (click)="toggleSeat(seat.id)"
+
+        @for (seat of row.value; track seat.id) {
+          <button
+            type="button"
+            (click)="toggleSeat(seat.id)"
             [class.selected]="selectedSeats.includes(seat.id)">
             {{ seat.seatNumber }}
-        </button>
-    </div>
+          </button>
+        }
+      </div>
+    }
 
     <!-- Services -->
-    <div *ngFor="let service of data.services" class="service-item">
+    @for (service of data.services; track service.id) {
+      <div class="service-item">
         <span>{{ service.name }} - {{ service.price | currency }}</span>
-        <button (click)="updateServiceQuantity(service.id, (selectedServices[service.id] || 0) - 1)">-</button>
-        <span>{{ selectedServices[service.id] || 0 }}</span>
-        <button (click)="updateServiceQuantity(service.id, (selectedServices[service.id] || 0) + 1)">+</button>
-    </div>
+
+        <button
+          type="button"
+          (click)="updateServiceQuantity(service.id!, (selectedServices[service.id!] || 0) - 1)">
+          -
+        </button>
+
+        <span>{{ selectedServices[service.id!] || 0 }}</span>
+
+        <button
+          type="button"
+          (click)="updateServiceQuantity(service.id!, (selectedServices[service.id!] || 0) + 1)">
+          +
+        </button>
+      </div>
+    }
 
     <!-- Booking Summary -->
     <div class="booking-summary">
-        <p>Tickets: {{ selectedSeats.length }}</p>
-        <p>Services: {{ selectedServices | json }}</p>
-        <p>Total: {{ calculateTotal(data) | currency }}</p>
-        <button (click)="handleBooking(data)" [disabled]="bookingInProgress">Confirm Booking</button>
+      <p>Tickets: {{ selectedSeats.length }}</p>
+      <p>Services: {{ selectedServices | json }}</p>
+      <p>Total: {{ calculateTotal(data) | currency }}</p>
+      <button
+        type="button"
+        (click)="handleBooking(data)"
+        [disabled]="bookingInProgress">
+        Confirm Booking
+      </button>
     </div>
-</div>
-<div *ngIf="!(bookingData$ | async)">
-    Loading...
-</div>
+  </div>
+} @else {
+  <div>Loading...</div>
+}

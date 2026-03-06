@@ -1,1 +1,87 @@
-<p>cinema-service works!</p>
+<section class="card">
+  <h2>Gestione Prodotti Cinema</h2>
+
+  <form #f="ngForm" (ngSubmit)="createService(f)">
+    <div class="row">
+      <label>Nome prodotto</label>
+      <input
+        type="text"
+        name="name"
+        [(ngModel)]="serviceForm.name"
+        required
+        placeholder="Es. Popcorn Medium"
+      />
+    </div>
+
+    <div class="row">
+      <label>Descrizione</label>
+      <input
+        type="text"
+        name="description"
+        [(ngModel)]="serviceForm.description"
+        required
+        placeholder="Es. Popcorn formato medio"
+      />
+    </div>
+
+    <div class="row">
+      <label>Prezzo</label>
+      <input
+        type="number"
+        step="0.01"
+        name="price"
+        [(ngModel)]="serviceForm.price"
+        required
+        placeholder="Es. 4.50"
+      />
+    </div>
+
+    @if (errorMsg) {
+      <p class="error">{{ errorMsg }}</p>
+    }
+
+    @if (successMsg) {
+      <p class="success">{{ successMsg }}</p>
+    }
+
+    <button type="submit">Aggiungi prodotto</button>
+  </form>
+</section>
+
+<section class="table-card">
+  <h3>Prodotti creati</h3>
+
+  @if (services.length > 0) {
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Descrizione</th>
+          <th>Prezzo</th>
+          <th>Azioni</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (service of services; track service.id) {
+          <tr>
+            <td>{{ service.id }}</td>
+            <td>{{ service.name }}</td>
+            <td>{{ service.description }}</td>
+            <td>{{ service.price }} €</td>
+            <td>
+              <button
+                type="button"
+                class="delete-btn"
+                (click)="deleteService(service.id!)">
+                Elimina
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <p>Nessun servizio creato.</p>
+  }
+</section>

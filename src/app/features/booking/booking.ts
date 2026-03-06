@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Observable, combineLatest, map, of, switchMap } from 'rxjs';
+import { Observable, combineLatest, map, switchMap } from 'rxjs';
 import { Screening } from '../../models/screening';
 import { Film } from '../../models/film';
+import { CinemaServiceModel } from '../../models/cinema-service';
 import { Seat, SeatService } from '../../services/seat.service';
-import { CinemaService, CinemaServiceService } from '../../services/cinema-service.service';
+import { CinemaServiceService } from '../../services/cinema-service.service';
 import { ScreeningService } from '../../services/screening.service';
 import { FilmService } from '../../services/film.service';
 import { BookingService } from '../../services/booking.service';
@@ -15,7 +16,7 @@ interface BookingViewModel {
   screening: Screening;
   film: Film;
   seats: Seat[];
-  services: CinemaService[];
+  services: CinemaServiceModel[];
 }
 
 @Component({
@@ -27,7 +28,6 @@ interface BookingViewModel {
 })
 export class BookingComponent {
 
-  // Observables for reactive template
   bookingData$: Observable<BookingViewModel>;
   selectedSeats: number[] = [];
   selectedServices: { [key: number]: number } = {};
@@ -39,22 +39,25 @@ export class BookingComponent {
     private screeningService: ScreeningService,
     private filmService: FilmService,
     private seatService: SeatService,
-    private cinemaServiceService: CinemaServiceService,
+    private cinemaService: CinemaServiceService,
     private bookingService: BookingService,
     private ticketService: TicketService
   ) {
     const screeningId = Number(this.route.snapshot.paramMap.get('screeningId'));
 
-    // Combine all observables into one reactive data stream
     this.bookingData$ = this.screeningService.getScreeningById(screeningId).pipe(
-      map(screening => ({ screening })),
-      switchMap(({ screening }) =>
+      switchMap(screening =>
         combineLatest([
           this.filmService.getFilmById(screening.filmId),
           this.seatService.getSeatsByHall(screening.hallId),
-          this.cinemaServiceService.getAllServices()
+          this.cinemaService.getAll()
         ]).pipe(
-          map(([film, seats, services]) => ({ screening, film, seats, services }))
+          map(([film, seats, services]) => ({
+            screening,
+            film,
+            seats,
+            services
+          }))
         )
       )
     );
@@ -78,11 +81,13 @@ export class BookingComponent {
 
   calculateTotal(viewModel: BookingViewModel): number {
     const ticketsTotal = this.selectedSeats.length * viewModel.screening.basePrice;
+
     const servicesTotal = Object.entries(this.selectedServices)
       .reduce((sum, [id, qty]) => {
         const service = viewModel.services.find(s => s.id === Number(id));
         return sum + (service ? service.price * qty : 0);
       }, 0);
+
     return ticketsTotal + servicesTotal;
   }
 
@@ -100,7 +105,6 @@ export class BookingComponent {
       totalPrice: this.calculateTotal(viewModel)
     }).subscribe({
       next: booking => {
-        // Create all tickets in parallel
         const ticketObservables = this.selectedSeats.map(seatId =>
           this.ticketService.createTicket({
             bookingId: booking.id,
@@ -139,5 +143,4 @@ export class BookingComponent {
     });
     return grouped;
   }
-
 }
