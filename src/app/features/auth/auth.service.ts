@@ -20,6 +20,7 @@ export class AuthService {
       .pipe(
         tap(response => {
           localStorage.setItem('token', response.token);
+          localStorage.setItem('userId', response.id);
           this.isLoggedIn.set(true);   // aggiorna stato
         })
       );

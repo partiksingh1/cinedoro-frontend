@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Seat } from '../models/seat';
 
-export interface Seat {
-    id: number;
-    rowNumber: number;
-    seatNumber: number;
-    hall: { id: number; name: string; capacity: number };
-}
+// export interface Seat {
+//     id: number;
+//     rowNumber: number;
+//     seatNumber: number;
+//     hall: { id: number; name: string; capacity: number };
+// }
 
 @Injectable({ providedIn: 'root' })
 export class SeatService {

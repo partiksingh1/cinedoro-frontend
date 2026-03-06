@@ -7,10 +7,9 @@
 
         <ul class="nav-links">
             <li><a routerLink="/" routerLinkActive="active">Home</a></li>
-            <li><a routerLink="/proiezioni" routerLinkActive="active">Proiezioni</a></li>
-            <li><a routerLink="/servizi" routerLinkActive="active">Servizi</a></li>
-            <li><a routerLink="/profile" routerLinkActive="active">Profilo</a></li>
-            <li><a routerLink="/carrello" routerLinkActive="active">Carrello</a></li>
+            <li><a routerLink="/films" routerLinkActive="active">Films</a></li>
+            <li><a routerLink="/bookings" routerLinkActive="active">My Bookings</a></li>
+            <li><a routerLink="/profile" routerLinkActive="active">Profile</a></li>
             <li *ngIf="isAdmin"><a routerLink="/admin" routerLinkActive="active">Admin</a></li>
         </ul>
 
@@ -19,7 +18,6 @@
             <a routerLink="/login">Login</a>
             <a routerLink="/register">Registrati</a>
             } @else {
-            <a routerLink="/profile">Profilo</a>
             <button type="button" (click)="logout()">Logout</button>
             }
         </div>
