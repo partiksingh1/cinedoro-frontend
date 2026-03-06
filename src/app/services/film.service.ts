@@ -20,8 +20,8 @@ export class FilmService {
         return this.http.get<Film>(`${this.api}/${id}`)
     }
 
-    createFilm(film: Film) {
-        return this.http.post<Film>(`${this.api}/`, film)
+    createFilm(film: any) {
+        return this.http.post<Film>(this.api, film);
     }
 
     updateFilm(id: number, film: Film) {

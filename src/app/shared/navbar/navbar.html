@@ -11,6 +11,7 @@
             <li><a routerLink="/servizi" routerLinkActive="active">Servizi</a></li>
             <li><a routerLink="/profile" routerLinkActive="active">Profilo</a></li>
             <li><a routerLink="/carrello" routerLinkActive="active">Carrello</a></li>
+            <li *ngIf="isAdmin"><a routerLink="/admin" routerLinkActive="active">Admin</a></li>
         </ul>
 
         <div class="nav-actions">

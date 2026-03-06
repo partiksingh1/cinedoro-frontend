@@ -1,10 +1,19 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterModule],
+  standalone: true,
+  imports: [RouterModule, CommonModule],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar { }
+export class NavbarComponent {
+  isAdmin = false;
+
+  ngOnInit() {
+    const role = localStorage.getItem('role');
+    this.isAdmin = role === 'admin';
+  }
+}

@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Navbar } from "./shared/navbar/navbar";
+import { NavbarComponent } from "./shared/navbar/navbar";
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, Navbar, CommonModule,
+  imports: [RouterOutlet, NavbarComponent, CommonModule,
     HttpClientModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
