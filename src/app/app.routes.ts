@@ -5,8 +5,6 @@ import { ScreeningByDateComponent } from './features/screenings/screening-by-dat
 import { AdminComponent } from './features/admin/admin.component';
 import { ActorListComponent } from './features/actors/actor-list.component';
 import { DirectorListComponent } from './features/directors/director-list.component';
-import { FilmCreateComponent } from './features/films/film-create/film-create';
-import { FilmEditComponent } from './features/films/film-edit/film-edit';
 import { FilmDetail } from './features/film-detail/film-detail';
 import { BookingComponent } from './features/booking/booking';
 import { AdminFilmListComponent } from './features/admin/films/film-list.component';
@@ -50,10 +48,10 @@ export const routes: Routes = [
     },
     {
         path: 'admin/films/create',
-        component: FilmCreateComponent
+        component: AdminFilmListComponent
     },
     {
         path: 'admin/films/edit/:id',
-        component: FilmEditComponent
+        component: AdminFilmListComponent
     }
 ];
