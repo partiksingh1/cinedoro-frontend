@@ -13,9 +13,14 @@
             <li><a routerLink="/carrello" routerLinkActive="active">Carrello</a></li>
         </ul>
 
-        <div class="nav-actions">
-            <button class="logout-btn">Logout</button>
+        <div class="nav-right">
+            @if (!authService.isLoggedIn()) {
+                <a routerLink="/login">Login</a>
+                <a routerLink="/register">Registrati</a>
+            } @else {
+                <a routerLink="/profile">Profilo</a>
+                <button type="button" (click)="logout()">Logout</button>
+            }
         </div>
-
     </div>
 </nav>

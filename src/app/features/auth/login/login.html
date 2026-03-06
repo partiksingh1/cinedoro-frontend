@@ -1,11 +1,10 @@
-<section class="login-container">
+<section class="card">
   <h2>Login</h2>
 
-  <!-- ngSubmit chiama onSubmit() quando il form viene inviato. -->
   <form (ngSubmit)="onSubmit()">
-    <div>
+
+    <div class="row">
       <label for="email">Email</label>
-      <!-- [(ngModel)] collega l'input alla proprieta email del componente. -->
       <input
         id="email"
         name="email"
@@ -15,7 +14,7 @@
       />
     </div>
 
-    <div>
+    <div class="row">
       <label for="password">Password</label>
       <input
         id="password"
@@ -26,12 +25,18 @@
       />
     </div>
 
-    @if (errorMessage) {
-      <p>{{ errorMessage }}</p>
+    @if (errorMsg) {
+      <p class="error">{{ errorMsg }}</p>
     }
 
-    <button type="submit" [disabled]="isLoading">
-      {{ isLoading ? 'Accesso in corso...' : 'Accedi' }}
+    <button type="submit" [disabled]="isSubmitting">
+      {{ isSubmitting ? 'Accesso in corso...' : 'Accedi' }}
     </button>
+
+    <p class="muted">
+      Non hai un account?
+      <a [routerLink]="['/register']">Registrati</a>
+    </p>
+
   </form>
 </section>

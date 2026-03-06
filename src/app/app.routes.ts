@@ -11,8 +11,12 @@ import { FilmDetail } from './features/film-detail/film-detail';
 import { BookingComponent } from './features/booking/booking';
 import { AdminFilmListComponent } from './features/admin/films/film-list.component';
 import { GenreListComponent } from './features/admin/genres/genre-list.component';
+import { Login } from './features/auth/login/login';
+import { UserRegistration } from './features/auth/register/register';
 export const routes: Routes = [
     { path: '', component: FilmListComponent },
+    { path: 'login', component: Login},
+    { path: 'register', component: UserRegistration},
     { path: 'films', component: FilmListComponent },
     { path: 'film/detail/:filmId', component: FilmDetail },
     { path: 'booking/:screeningId', component: BookingComponent },
