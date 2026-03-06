@@ -8,7 +8,7 @@
 
     <p>Price: {{screening.basePrice}} €</p>
 
-    <button>
+    <button [routerLink]="['/booking', screening.id]">
         Book
     </button>
 

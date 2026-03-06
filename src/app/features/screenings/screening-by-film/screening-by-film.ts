@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ScreeningService } from '../../../services/screening.service';
 import { Screening } from '../../../models/screening';
 import { CommonModule } from '@angular/common';
@@ -9,7 +9,7 @@ import { switchMap, map } from 'rxjs/operators';
 @Component({
   selector: 'app-screening-by-film',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './screening-by-film.html'
 })
 export class ScreeningByFilmComponent {

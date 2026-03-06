@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { Observable, forkJoin } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
+import { Observable, combineLatest, map, of, switchMap } from 'rxjs';
 import { Screening } from '../../models/screening';
 import { Film } from '../../models/film';
 import { Seat, SeatService } from '../../services/seat.service';
@@ -10,7 +10,13 @@ import { ScreeningService } from '../../services/screening.service';
 import { FilmService } from '../../services/film.service';
 import { BookingService } from '../../services/booking.service';
 import { TicketService } from '../../services/ticket.service';
-import { CommonModule } from '@angular/common';
+
+interface BookingViewModel {
+  screening: Screening;
+  film: Film;
+  seats: Seat[];
+  services: CinemaService[];
+}
 
 @Component({
   imports: [CommonModule, RouterModule],
@@ -19,18 +25,12 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./booking.css'],
   standalone: true
 })
-export class BookingComponent implements OnInit {
+export class BookingComponent {
 
-  screening!: Screening;
-  film!: Film;
-
-  seats: Seat[] = [];
-  services: CinemaService[] = [];
-
+  // Observables for reactive template
+  bookingData$: Observable<BookingViewModel>;
   selectedSeats: number[] = [];
   selectedServices: { [key: number]: number } = {};
-
-  loading = true;
   bookingInProgress = false;
 
   constructor(
@@ -42,31 +42,22 @@ export class BookingComponent implements OnInit {
     private cinemaServiceService: CinemaServiceService,
     private bookingService: BookingService,
     private ticketService: TicketService
-  ) { }
-
-  ngOnInit(): void {
-
+  ) {
     const screeningId = Number(this.route.snapshot.paramMap.get('screeningId'));
 
-    this.screeningService.getScreeningById(screeningId).pipe(
-
-      switchMap(screening => {
-        this.screening = screening;
-
-        return forkJoin({
-          film: this.filmService.getFilmById(screening.filmId),
-          seats: this.seatService.getSeatsByHall(screening.hallId),
-          services: this.cinemaServiceService.getAllServices()
-        });
-      })
-
-    ).subscribe(data => {
-      this.film = data.film;
-      this.seats = data.seats;
-      this.services = data.services;
-      this.loading = false;
-    });
-
+    // Combine all observables into one reactive data stream
+    this.bookingData$ = this.screeningService.getScreeningById(screeningId).pipe(
+      map(screening => ({ screening })),
+      switchMap(({ screening }) =>
+        combineLatest([
+          this.filmService.getFilmById(screening.filmId),
+          this.seatService.getSeatsByHall(screening.hallId),
+          this.cinemaServiceService.getAllServices()
+        ]).pipe(
+          map(([film, seats, services]) => ({ screening, film, seats, services }))
+        )
+      )
+    );
   }
 
   toggleSeat(seatId: number) {
@@ -85,23 +76,17 @@ export class BookingComponent implements OnInit {
     }
   }
 
-  calculateTotal(): number {
-
-    const ticketsTotal = this.selectedSeats.length * this.screening.basePrice;
-
+  calculateTotal(viewModel: BookingViewModel): number {
+    const ticketsTotal = this.selectedSeats.length * viewModel.screening.basePrice;
     const servicesTotal = Object.entries(this.selectedServices)
       .reduce((sum, [id, qty]) => {
-
-        const service = this.services.find(s => s.id === Number(id));
+        const service = viewModel.services.find(s => s.id === Number(id));
         return sum + (service ? service.price * qty : 0);
-
       }, 0);
-
     return ticketsTotal + servicesTotal;
   }
 
-  handleBooking() {
-
+  handleBooking(viewModel: BookingViewModel) {
     if (this.selectedSeats.length === 0) {
       alert('Select at least one seat');
       return;
@@ -111,42 +96,47 @@ export class BookingComponent implements OnInit {
 
     this.bookingService.createBooking({
       userId: 1,
-      screeningId: this.screening.id || 0,
-      totalPrice: this.calculateTotal()
-    }).subscribe(booking => {
+      screeningId: viewModel.screening.id || 0,
+      totalPrice: this.calculateTotal(viewModel)
+    }).subscribe({
+      next: booking => {
+        // Create all tickets in parallel
+        const ticketObservables = this.selectedSeats.map(seatId =>
+          this.ticketService.createTicket({
+            bookingId: booking.id,
+            screeningId: viewModel.screening.id || 0,
+            seatId,
+            price: viewModel.screening.basePrice
+          })
+        );
 
-      this.selectedSeats.forEach(seatId => {
-
-        this.ticketService.createTicket({
-          bookingId: booking.id,
-          screeningId: this.screening.id || 0,
-          seatId: seatId,
-          price: this.screening.basePrice
-        }).subscribe();
-
-      });
-
-      alert('Booking successful!');
-      this.router.navigate(['/films']);
-
+        combineLatest(ticketObservables).subscribe({
+          next: () => {
+            alert('Booking successful!');
+            this.router.navigate(['/films']);
+            this.bookingInProgress = false;
+          },
+          error: err => {
+            console.error('Ticket creation failed', err);
+            alert('Booking failed. Please try again.');
+            this.bookingInProgress = false;
+          }
+        });
+      },
+      error: err => {
+        console.error('Booking failed', err);
+        alert('Booking failed. Please try again.');
+        this.bookingInProgress = false;
+      }
     });
-
   }
 
-  getSeatsByRow(): { [row: number]: Seat[] } {
-
+  getSeatsByRow(seats: Seat[]): { [row: number]: Seat[] } {
     const grouped: { [row: number]: Seat[] } = {};
-
-    this.seats.forEach(seat => {
-
-      if (!grouped[seat.rowNumber]) {
-        grouped[seat.rowNumber] = [];
-      }
-
+    seats.forEach(seat => {
+      if (!grouped[seat.rowNumber]) grouped[seat.rowNumber] = [];
       grouped[seat.rowNumber].push(seat);
-
     });
-
     return grouped;
   }
 
