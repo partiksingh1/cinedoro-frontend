@@ -1,6 +1,14 @@
 <div class="container mt-4">
 
-    <h2>Movies</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <h2>Movies</h2>
+
+        <button class="btn btn-success" routerLink="/admin/films/create">
+            Create Movie
+        </button>
+
+    </div>
 
     <div class="row">
 
@@ -10,20 +18,33 @@
 
                 <div class="card-body">
 
-                    <h5>{{ film.title }}</h5>
+                    <h5 class="card-title">{{ film.title }}</h5>
 
-                    <p>{{ film.description }}</p>
+                    <p class="card-text">{{ film.description }}</p>
 
                     <p>
                         Duration: {{ film.durationMinutes }} min
                     </p>
-                    <!-- 
-                    <button class="btn btn-primary">
-                        View
-                    </button> -->
-                    <button class="btn btn-primary" [routerLink]="['/screenings/film', film.id]">
-                        View Screenings
-                    </button>
+
+                    <div class="d-flex gap-2">
+
+                        <button class="btn btn-primary"
+                                [routerLink]="['/screenings/film', film.id]">
+                            View Screenings
+                        </button>
+
+                        <button class="btn btn-warning"
+                                [routerLink]="['/admin/films/edit', film.id]">
+                            Edit
+                        </button>
+
+                        <button class="btn btn-danger"
+                                (click)="deleteFilm(film.id!)">
+                            Delete
+                        </button>
+
+                    </div>
+
                 </div>
 
             </div>

@@ -17,6 +17,13 @@ export class FilmListComponent {
 
     constructor(private filmService: FilmService) {
         this.films$ = this.filmService.getAllFilms();
+
+    }
+
+    deleteFilm(id: number) {
+        this.filmService.deleteFilm(id).subscribe(() => {
+            this.films$ = this.filmService.getAllFilms();
+        });
     }
 
 }
