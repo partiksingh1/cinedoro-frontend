@@ -1,1 +1,41 @@
-<p>register works!</p>
+<section class="card">
+  <h2>Registrazione</h2>
+
+  <form #f="ngForm" (ngSubmit)="submit(f)">
+    <div class="row">
+      <label>Nome</label>
+      <input name="firstName" [(ngModel)]="firstName" required minlength="2" />
+    </div>
+
+    <div class="row">
+      <label>Cognome</label>
+      <input name="lastName" [(ngModel)]="lastName" required minlength="2" />
+    </div>
+
+    <div class="row">
+      <label>Email</label>
+      <input name="email" type="email" [(ngModel)]="email" required />
+    </div>
+
+    <div class="row">
+      <label>Password</label>
+      <input name="password" type="password" [(ngModel)]="password" required minlength="6" />
+    </div>
+
+    <div class="row">
+      <label>Conferma Password</label>
+      <input name="confirmPassword" type="password" [(ngModel)]="confirmPassword" required />
+      <small *ngIf="confirmPassword && password !== confirmPassword">Le password non coincidono</small>
+    </div>
+
+    <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
+
+    <button type="submit" [disabled]="isSubmitting">
+      {{ isSubmitting ? 'Registrazione...' : 'Crea account' }}
+    </button>
+
+    <p class="muted">
+      Hai già un account? <a routerLink="/login">Login</a>
+    </p>
+  </form>
+</section>
