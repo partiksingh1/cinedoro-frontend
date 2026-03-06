@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../features/auth/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -11,9 +12,15 @@ import { CommonModule } from '@angular/common';
 })
 export class NavbarComponent {
   isAdmin = false;
-
+  constructor(
+    public authService: AuthService,
+  ) { }
   ngOnInit() {
     const role = localStorage.getItem('role');
     this.isAdmin = role === 'admin';
+  }
+
+  logout() {
+    this.authService.logout();
   }
 }
