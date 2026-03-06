@@ -21,7 +21,7 @@ export class Login {
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   onSubmit(): void {
     if (!this.email.trim() || !this.password.trim()) {
@@ -52,4 +52,6 @@ export class Login {
         }
       });
   }
+
+
 }
