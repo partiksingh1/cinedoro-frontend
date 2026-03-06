@@ -1,0 +1,29 @@
+<div *ngIf="loading">Loading...</div>
+<div *ngIf="!loading">
+    <h2>{{ film.title }} - {{ screening.screeningDate }} at {{ screening.screeningTime.substring(0,5) }}</h2>
+
+    <!-- Seats -->
+    <div *ngFor="let row of getSeatsByRow() | keyvalue">
+        <span>Row {{ row.key }}</span>
+        <button *ngFor="let seat of row.value" (click)="toggleSeat(seat.id)"
+            [class.selected]="selectedSeats.includes(seat.id)">
+            {{ seat.seatNumber }}
+        </button>
+    </div>
+
+    <!-- Services -->
+    <div *ngFor="let service of services">
+        <span>{{ service.name }} - {{ service.price | currency }}</span>
+        <button (click)="updateServiceQuantity(service.id, (selectedServices[service.id] || 0) - 1)">-</button>
+        <span>{{ selectedServices[service.id] || 0 }}</span>
+        <button (click)="updateServiceQuantity(service.id, (selectedServices[service.id] || 0) + 1)">+</button>
+    </div>
+
+    <!-- Booking Summary -->
+    <div>
+        <p>Tickets: {{ selectedSeats.length }}</p>
+        <p>Services: {{ selectedServices | json }}</p>
+        <p>Total: {{ calculateTotal() | currency }}</p>
+        <button (click)="handleBooking()" [disabled]="bookingInProgress">Confirm Booking</button>
+    </div>
+</div>

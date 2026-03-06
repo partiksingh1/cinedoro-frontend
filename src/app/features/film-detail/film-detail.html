@@ -1,0 +1,56 @@
+<div *ngIf="film$ | async as film">
+
+    <h1>{{ film.title }}</h1>
+
+    <p>{{ film.description }}</p>
+
+    <p>
+        <strong>Duration:</strong> {{ film.durationMinutes }} minutes
+    </p>
+
+    <p>
+        <strong>Release Date:</strong> {{ film.releaseDate }}
+    </p>
+
+    <p>
+        <strong>Age Rating:</strong> {{ film.ageRating }}+
+    </p>
+
+    <p>
+        <strong>Director:</strong>
+        {{ film.director.firstName }} {{ film.director.lastName }}
+    </p>
+
+    <hr>
+
+    <h3>Genres</h3>
+    <span *ngFor="let genre of film.genres">
+        {{ genre.name }}
+    </span>
+
+    <hr>
+
+    <h3>Actors</h3>
+    <ul>
+        <li *ngFor="let actor of film.actors">
+            {{ actor.firstName }} {{ actor.lastName }} ({{ actor.nationality }})
+        </li>
+    </ul>
+
+    <hr>
+
+    <h3>Screenings</h3>
+
+    <div *ngFor="let date of (groupScreeningsByDate(film.screenings) | keyvalue)">
+
+        <h4>{{ date.key }}</h4>
+
+        <div *ngFor="let screening of date.value">
+            <button [routerLink]="['/booking', screening.id]">
+                {{ screening.screeningTime }} - €{{ screening.basePrice }}
+            </button>
+        </div>
+
+    </div>
+
+</div>

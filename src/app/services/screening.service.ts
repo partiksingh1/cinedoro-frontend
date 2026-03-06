@@ -23,5 +23,8 @@ export class ScreeningService {
     getScreeningsByDate(date: string): Observable<Screening[]> {
         return this.http.get<Screening[]>(`${this.apiUrl}/date?date=${date}`)
     }
+    getScreeningById(id: number): Observable<Screening> {
+        return this.http.get<Screening>(`${this.apiUrl}/${id}`);
+    }
 
 }
