@@ -13,12 +13,14 @@ import { UserRegistration } from './features/auth/register/register';
 import { DirectorListComponent } from './features/admin/directors/director-list.component';
 import { CinemaService } from './features/admin/cinema-service/cinema-service';
 import { TicketComponent } from './features/tickets/tickets';
+import { MyBookingsComponent } from './features/my-bookings/my-bookings.component';
 export const routes: Routes = [
     { path: '', component: FilmListComponent },
     { path: 'login', component: Login },
     { path: 'register', component: UserRegistration },
     { path: 'films', component: FilmListComponent },
     { path: 'bookings', component: BookingComponent },
+    { path: 'my-bookings', component: MyBookingsComponent },
     { path: 'film/detail/:filmId', component: FilmDetail },
     { path: 'booking/:screeningId', component: BookingComponent },
     { path: 'screenings/film/:filmId', component: ScreeningByFilmComponent },
@@ -63,5 +65,9 @@ export const routes: Routes = [
     {
         path: 'admin/films/edit/:id',
         component: AdminFilmListComponent
-    }
+    },
+    //     {
+    //     path: 'admin/screenings',
+    //     component: AdminScreening
+    // }
 ];

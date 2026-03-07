@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin } from 'rxjs';
 
 export interface BookingDTO {
-    id: number;
+    id: any;
     userId: number;
     screeningId: number;
     totalPrice: number;
@@ -53,5 +53,8 @@ export class BookingService {
 
     deleteBooking(id: number): Observable<void> {
         return this.http.delete<void>(`${this.baseUrl}/${id}`);
+    }
+    getBookingDetails(userId: number) {
+        return this.http.get<any[]>(`${this.baseUrl}/user/${userId}/details`);
     }
 }

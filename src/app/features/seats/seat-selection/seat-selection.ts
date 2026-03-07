@@ -7,11 +7,13 @@ import { CommonModule } from '@angular/common'
 import { BookingService } from '../../../services/booking.service'
 import { ScreeningService } from '../../../services/screening.service'
 import { UserService } from '../../../services/user.service'
+import { CinemaService, CinemaServiceService } from '../../../services/cinema-service.service' // New Service
 import { Screening } from '../../../models/screening'
 import { forkJoin, switchMap, map, tap } from 'rxjs'
+import { FormsModule } from '@angular/forms'
 
 @Component({
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   selector: 'app-seat-selection',
   templateUrl: './seat-selection.html',
   styleUrls: ['./seat-selection.css']
@@ -20,7 +22,6 @@ export class SeatSelectionComponent implements OnInit {
 
   seats: Seat[] = []
   seatMatrix: Seat[][] = []
-
   occupiedSeats: number[] = []
   selectedSeats: number[] = []
 
@@ -29,6 +30,9 @@ export class SeatSelectionComponent implements OnInit {
   loading = false
   errorMessage = ''
 
+  cinemaServices: CinemaService[] = [] // To store available cinema services
+  selectedServices: { [serviceId: number]: number } = {} // To track selected services and quantities
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -36,7 +40,8 @@ export class SeatSelectionComponent implements OnInit {
     private ticketService: TicketService,
     private bookingService: BookingService,
     private screeningService: ScreeningService,
-    private userService: UserService
+    private userService: UserService,
+    private cinemaService: CinemaServiceService // Inject CinemaService
   ) { }
 
   ngOnInit() {
@@ -61,6 +66,30 @@ export class SeatSelectionComponent implements OnInit {
         console.error('Error loading screening', err)
       }
     })
+
+    // Load available cinema services (like popcorn, drinks)
+    this.cinemaService.getAllServices().subscribe({
+      next: services => {
+        this.cinemaServices = services;
+      },
+      error: err => {
+        this.errorMessage = 'Failed to load cinema services'
+        console.error('Error loading services', err)
+      }
+    })
+  }
+
+  getSelectedServicesTotal(): number {
+    let total = 0;
+    for (const serviceId in this.selectedServices) {
+      if (this.selectedServices.hasOwnProperty(serviceId)) {
+        const service = this.cinemaServices.find(s => s.id == parseInt(serviceId));
+        if (service) {
+          total += this.selectedServices[serviceId] * service.price;
+        }
+      }
+    }
+    return total;
   }
 
   bookSeats() {
@@ -82,7 +111,7 @@ export class SeatSelectionComponent implements OnInit {
       return;
     }
 
-    const totalPrice = this.selectedSeats.length * this.screening.basePrice
+    const totalPrice = (this.selectedSeats.length * this.screening.basePrice) + this.getSelectedServicesTotal();
 
     const bookingRequest = {
       userId: userId,
@@ -94,33 +123,35 @@ export class SeatSelectionComponent implements OnInit {
     this.errorMessage = ''
 
     this.bookingService.createBooking(bookingRequest).pipe(
-
       switchMap(booking => {
-
         const ticketRequests = this.selectedSeats.map(seatId => {
-
           const ticketRequest = {
             bookingId: booking.id,
             screeningId: this.screeningId,
             seatId: seatId,
             price: this.screening!.basePrice
           }
-
           return this.ticketService.createTicket(ticketRequest)
-
         })
 
-        return forkJoin(ticketRequests).pipe(
+        // Book services (like popcorn, drinks)
+        const serviceRequests = Object.entries(this.selectedServices).map(([serviceId, quantity]) => {
+          return this.cinemaService.bookService({
+            bookingId: booking.id,
+            extraProductId: parseInt(serviceId),
+            quantity: quantity
+          })
+        })
+
+        return forkJoin([...ticketRequests, ...serviceRequests]).pipe(
           map(() => booking.id)
         )
-
       }),
 
       tap(bookingId => {
         this.loading = false
         this.router.navigate(['/ticket', bookingId])
       })
-
     ).subscribe({
       error: err => {
         this.loading = false
@@ -128,8 +159,8 @@ export class SeatSelectionComponent implements OnInit {
         console.error('Booking error:', err)
       }
     })
-
   }
+
 
   loadSeats() {
     if (!this.screening) return;
@@ -145,11 +176,9 @@ export class SeatSelectionComponent implements OnInit {
           console.error('Error loading seats', err)
         }
       })
-
   }
 
   loadOccupiedSeats() {
-
     this.ticketService.getOccupiedSeats(this.screeningId)
       .subscribe({
         next: data => {
@@ -160,31 +189,24 @@ export class SeatSelectionComponent implements OnInit {
           console.error('Error loading occupied seats', err)
         }
       })
-
   }
 
   buildSeatMatrix() {
-
     const rows: { [key: number]: Seat[] } = {}
 
     this.seats.forEach(seat => {
-
       if (!rows[seat.rowNumber]) {
         rows[seat.rowNumber] = []
       }
-
       rows[seat.rowNumber].push(seat)
-
     })
 
     this.seatMatrix = Object.values(rows).map(row =>
       row.sort((a, b) => a.seatNumber - b.seatNumber)
     )
-
   }
 
   selectSeat(seat: Seat) {
-
     if (this.isOccupied(seat.id)) return
 
     if (this.selectedSeats.includes(seat.id)) {
@@ -192,7 +214,6 @@ export class SeatSelectionComponent implements OnInit {
     } else {
       this.selectedSeats.push(seat.id)
     }
-
   }
 
   isOccupied(seatId: number) {
@@ -210,5 +231,4 @@ export class SeatSelectionComponent implements OnInit {
     }
     return null
   }
-
 }

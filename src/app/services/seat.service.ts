@@ -19,4 +19,7 @@ export class SeatService {
     getSeatsByHall(hallId: number): Observable<Seat[]> {
         return this.http.get<Seat[]>(`${this.baseUrl}/hall/${hallId}`);
     }
+    getSeatsByid(hallId: number): Observable<Seat[]> {
+        return this.http.get<Seat[]>(`${this.baseUrl}/${hallId}`);
+    }
 }

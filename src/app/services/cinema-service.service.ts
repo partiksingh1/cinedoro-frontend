@@ -18,4 +18,7 @@ export class CinemaServiceService {
     getAllServices(): Observable<CinemaService[]> {
         return this.http.get<CinemaService[]>(this.baseUrl);
     }
+    bookService(request: { bookingId: number, extraProductId: number, quantity: number }): Observable<void> {
+        return this.http.post<void>(`${this.baseUrl}/book`, request);
+    }
 }
