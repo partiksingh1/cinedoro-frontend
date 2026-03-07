@@ -1,1 +1,73 @@
-<p>actor works!</p>
+<div class="actor-admin">
+  <div class="header">
+    <h2>Gestione Attori</h2>
+    <button class="btn btn-primary" (click)="openCreateForm()">+ Aggiungi Attore</button>
+  </div>
+
+  <!-- Messaggi -->
+  <div class="success" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <!-- Loading -->
+  <div *ngIf="loading"><p>Caricamento...</p></div>
+
+  <!-- Form crea/modifica -->
+  <div class="form-overlay" *ngIf="showForm">
+    <div class="form-card">
+      <h3>{{ isEditing ? 'Modifica Attore' : 'Nuovo Attore' }}</h3>
+
+      <div class="form-group">
+        <label>Nome</label>
+        <input type="text" [(ngModel)]="selectedActor.firstName" placeholder="Nome" />
+      </div>
+      <div class="form-group">
+        <label>Cognome</label>
+        <input type="text" [(ngModel)]="selectedActor.lastName" placeholder="Cognome" />
+      </div>
+      <div class="form-group">
+        <label>Data di nascita</label>
+        <input type="date" [(ngModel)]="selectedActor.birthDate" />
+      </div>
+      <div class="form-group">
+        <label>Nazionalità</label>
+        <input type="text" [(ngModel)]="selectedActor.nationality" placeholder="Nazionalità" />
+      </div>
+
+      <div class="form-buttons">
+        <button class="btn btn-primary" (click)="save()">
+          {{ isEditing ? 'Salva Modifiche' : 'Crea' }}
+        </button>
+        <button class="btn btn-secondary" (click)="closeForm()">Annulla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabella attori -->
+  <table *ngIf="!loading && actors.length > 0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Cognome</th>
+        <th>Data di nascita</th>
+        <th>Nazionalità</th>
+        <th>Azioni</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let actor of actors">
+        <td>{{ actor.id }}</td>
+        <td>{{ actor.firstName }}</td>
+        <td>{{ actor.lastName }}</td>
+        <td>{{ actor.birthDate }}</td>
+        <td>{{ actor.nationality }}</td>
+        <td>
+          <button class="btn btn-edit" (click)="openEditForm(actor)">✏️ Modifica</button>
+          <button class="btn btn-delete" (click)="delete(actor.id)">🗑️ Elimina</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!loading && actors.length === 0">Nessun attore trovato</p>
+</div>

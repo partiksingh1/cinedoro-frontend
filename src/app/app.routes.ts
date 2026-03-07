@@ -3,7 +3,6 @@ import { FilmListComponent } from './features/films/film-list.component';
 import { ScreeningByFilmComponent } from './features/screenings/screening-by-film/screening-by-film';
 import { ScreeningByDateComponent } from './features/screenings/screening-by-date/screening-by-date';
 import { AdminComponent } from './features/admin/admin.component';
-import { ActorListComponent } from './features/actors/actor-list.component';
 import { FilmDetail } from './features/film-detail/film-detail';
 import { BookingComponent } from './features/booking/booking';
 import { AdminFilmListComponent } from './features/admin/films/film-list.component';
@@ -12,6 +11,7 @@ import { Login } from './features/auth/login/login';
 import { UserRegistration } from './features/auth/register/register';
 import { DirectorListComponent } from './features/admin/directors/director-list.component';
 import { CinemaService } from './features/admin/cinema-service/cinema-service';
+import { ActorAdminComponent } from './features/admin/actor/actor';
 export const routes: Routes = [
     { path: '', component: FilmListComponent },
     { path: 'login', component: Login },
@@ -40,10 +40,6 @@ export const routes: Routes = [
         component: GenreListComponent
     },
     {
-        path: 'admin/actors',
-        component: ActorListComponent
-    },
-    {
         path: 'admin/directors',
         component: DirectorListComponent
     },
@@ -58,5 +54,9 @@ export const routes: Routes = [
     {
         path: 'admin/films/edit/:id',
         component: AdminFilmListComponent
+    },
+
+    { 
+        path: 'admin/actors', component: ActorAdminComponent 
     }
 ];

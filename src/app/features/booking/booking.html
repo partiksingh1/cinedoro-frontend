@@ -1,5 +1,5 @@
 <div *ngIf="bookingData$ | async as data">
-    <h2>{{ data.film.title }} - {{ data.screening.screeningDate }} at {{ data.screening.screeningTime?.substring(0,5) }}
+    <h2>{{ data.film.title }} - {{ data.screening.screeningDate }} at {{ data.screening.screeningTime.substring(0,5) }}
     </h2>
 
     <!-- Seats -->
