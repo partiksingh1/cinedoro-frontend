@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActorService } from '../../../services/actor.service';
@@ -9,7 +9,7 @@ import { Actor } from '../../../models/actor';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './actor.html',
-  styleUrl: './actor.css'
+  styleUrls: ['./actor.css']
 })
 export class ActorAdminComponent implements OnInit {
 
@@ -18,37 +18,37 @@ export class ActorAdminComponent implements OnInit {
   errorMessage: string = '';
   successMessage: string = '';
 
-  // form per creare/modificare
   showForm: boolean = false;
   isEditing: boolean = false;
   selectedActor: Actor = this.emptyActor();
 
-  constructor(private actorService: ActorService) {}
+  constructor(
+    private actorService: ActorService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
+    console.log("Component caricato");
     this.loadActors();
   }
 
   emptyActor(): Actor {
-    return {
-      id: 0,
-      firstName: '',
-      lastName: '',
-      birthDate: '',
-      nationality: ''
-    };
+    return { id: 0, firstName: '', lastName: '', birthDate: '', nationality: '' };
   }
 
   loadActors() {
     this.loading = true;
     this.actorService.getAllActors().subscribe({
       next: (data) => {
-        this.actors = data;
+        this.actors = [...data]; // forza nuovo riferimento
         this.loading = false;
+        this.cdr.detectChanges();
       },
-      error: () => {
+      error: (err) => {
+        console.error('Errore nel caricamento degli attori:', err);
         this.errorMessage = 'Errore nel caricamento degli attori';
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -60,7 +60,7 @@ export class ActorAdminComponent implements OnInit {
   }
 
   openEditForm(actor: Actor) {
-    this.selectedActor = { ...actor }; // copia l'attore per non modificare l'originale
+    this.selectedActor = { ...actor };
     this.isEditing = true;
     this.showForm = true;
   }
@@ -73,34 +73,58 @@ export class ActorAdminComponent implements OnInit {
 
   save() {
     if (this.isEditing) {
+      // MODIFICA attore esistente
       this.actorService.updateActor(this.selectedActor.id, this.selectedActor).subscribe({
         next: () => {
+          const index = this.actors.findIndex(a => a.id === this.selectedActor.id);
+          if (index !== -1) this.actors[index] = { ...this.selectedActor };
           this.successMessage = 'Attore aggiornato con successo';
-          this.loadActors();
           this.closeForm();
         },
-        error: () => this.errorMessage = 'Errore durante la modifica'
+        error: (err) => {
+          console.error('Errore durante la modifica:', err);
+          this.errorMessage = 'Errore durante la modifica';
+          this.cdr.detectChanges();
+        }
       });
     } else {
-      this.actorService.createActor(this.selectedActor).subscribe({
-        next: () => {
+      // CREAZIONE nuovo attore
+      const actorToCreate = {
+        firstName: this.selectedActor.firstName,
+        lastName: this.selectedActor.lastName,
+        birthDate: this.selectedActor.birthDate,
+        nationality: this.selectedActor.nationality
+      };
+
+      this.actorService.createActor(actorToCreate as Actor).subscribe({
+        next: (created) => {
+          this.actors.push(created);
           this.successMessage = 'Attore creato con successo';
-          this.loadActors();
           this.closeForm();
         },
-        error: () => this.errorMessage = 'Errore durante la creazione'
+        error: (err) => {
+          console.error('Errore durante la creazione:', err);
+          this.errorMessage = 'Errore durante la creazione';
+          this.cdr.detectChanges();
+        }
       });
     }
   }
 
   delete(id: number) {
     if (!confirm('Sei sicuro di voler eliminare questo attore?')) return;
+
     this.actorService.deleteActor(id).subscribe({
       next: () => {
+        this.actors = this.actors.filter(a => a.id !== id);
         this.successMessage = 'Attore eliminato con successo';
-        this.loadActors();
       },
-      error: () => this.errorMessage = 'Errore durante la cancellazione'
+      error: (err) => {
+        console.error('Errore durante la cancellazione:', err);
+        this.errorMessage = 'Errore durante la cancellazione';
+        this.cdr.detectChanges();
+      }
     });
   }
 }
+
