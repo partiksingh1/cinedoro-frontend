@@ -1,0 +1,176 @@
+<h3>Aggiungi Proiezione</h3>
+
+<form (ngSubmit)="createScreening()">
+
+  <div>
+    <label>Film</label>
+    <select [(ngModel)]="newScreening.filmId" name="filmId" required>
+      <option *ngFor="let film of films()" [value]="film.id">{{ film.title }}</option>
+    </select>
+  </div>
+
+  <div>
+    <label>Sala</label>
+    <select [(ngModel)]="newScreening.hallId" name="hallId" required>
+      <option *ngFor="let hall of halls()" [value]="hall.id">{{ hall.name }}</option>
+    </select>
+  </div>
+
+  <div>
+    <label>Data</label>
+    <input type="date" [(ngModel)]="newScreening.screeningDate" name="date" required>
+  </div>
+
+  <div>
+    <label>Orario</label>
+    <input type="time" [(ngModel)]="newScreening.screeningTime" name="time" required>
+  </div>
+
+  <div>
+    <label>Prezzo</label>
+    <input type="number" step="0.01" [(ngModel)]="newScreening.basePrice" name="price" required>
+  </div>
+
+  <button type="submit">Crea Proiezione</button>
+
+</form>
+
+<hr>
+
+<h3>Lista Proiezioni</h3>
+
+<table border="1">
+
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Film</th>
+      <th>Sala</th>
+      <th>Data</th>
+      <th>Ora</th>
+      <th>Prezzo</th>
+      <th>Azioni</th>
+    </tr>
+  </thead>
+
+  <tbody>
+
+    <tr *ngFor="let screening of screenings()">
+
+      <td>{{screening.id}}</td>
+
+      <td>{{ getFilmTitle(screening.filmId) }}</td>
+
+      <td>{{ getHallName(screening.hallId) }}</td>
+
+      <td>{{screening.screeningDate}}</td>
+
+      <td>{{screening.screeningTime}}</td>
+
+      <td>{{screening.basePrice}}</td>
+
+      <td>
+
+        <button (click)="startEdit(screening)">
+          Modifica
+        </button>
+
+        <button (click)="deleteScreening(screening.id)">
+          Elimina
+        </button>
+      </td>
+
+    </tr>
+  
+  </tbody>
+
+</table> 
+
+<hr>
+
+<h3 *ngIf="editingScreening()">Modifica Proiezione</h3>
+
+<form *ngIf="editingScreening()" (ngSubmit)="updateScreening()">
+
+  <div>
+
+    <label>Film</label>
+
+    <select [(ngModel)]="editingScreening()!.filmId" name="editFilmId" required>
+
+      <option *ngFor="let film of films()" [value]="film.id">
+
+        {{ film.title }}
+
+      </option>
+
+    </select>
+
+  </div>
+
+  <div>
+
+    <label>Sala</label>
+
+    <select [(ngModel)]="editingScreening()!.hallId" name="editHallId" required>
+
+      <option *ngFor="let hall of halls()" [value]="hall.id">
+
+        {{ hall.name }}
+
+      </option>
+
+    </select>
+
+  </div>
+
+  <div>
+
+    <label>Data</label>
+
+    <input
+      type="date"
+      [(ngModel)]="editingScreening()!.screeningDate"
+      name="editDate"
+      required>
+
+  </div>
+
+  <div>
+
+    <label>Ora</label>
+
+    <input
+      type="time"
+      [(ngModel)]="editingScreening()!.screeningTime"
+      name="editTime"
+      required>
+
+  </div>
+
+  <div>
+
+    <label>Prezzo</label>
+
+    <input
+      type="number"
+      step="0.01"
+      [(ngModel)]="editingScreening()!.basePrice"
+      name="editPrice"
+      required>
+
+  </div>
+
+  <button type="submit">
+
+    Salva Modifica
+
+  </button>
+
+  <button type="button" (click)="editingScreening.set(null)">
+
+    Annulla
+
+  </button>
+
+</form>

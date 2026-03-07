@@ -1,0 +1,190 @@
+
+/* ===== Body & Typography ===== */
+body {
+  font-family: 'Roboto', sans-serif;
+  background: #e5e7eb; /* grigio-soft */
+  color: #2c2c2c;
+  margin: 0;
+  padding: 20px;
+  line-height: 1.5;
+}
+
+h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  color: #2c3e50; /* blu notte | elegante */
+}
+
+h3 {
+  font-size: 1.15rem;
+  font-weight: 500;
+  margin-top: 1rem;
+  margin-bottom: 0.8rem;
+  color: #34495e;
+}
+
+/* ===== Forms Container ===== */
+.forms-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.form-box {
+  flex: 1;
+  min-width: 250px;
+  max-width: 300px;
+  background-color: #ffffff;
+  padding: 14px 18px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* ===== Form Elements ===== */
+form div {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.7rem;
+}
+
+label {
+  margin-bottom: 0.3rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #4b5158;
+}
+
+input[type="text"] {
+  padding: 6px 10px;
+  border: 1px solid #a0a0a0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: #556272;
+  box-shadow: 0 0 4px rgba(85,98,114,0.25);
+}
+
+/* ===== Buttons ===== */
+button {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  margin-right: 5px;
+}
+
+/* Verde profondo: aggiungi / salva */
+button[type="submit"] {
+  background-color: #2e8b57; /* verde scuro, elegante */
+  color: white;
+}
+button[type="submit"]:hover {
+  background-color: #267046;
+}
+
+/* Rosso profondo: annulla / elimina */
+button.cancel,
+button.delete {
+  background-color: #a83232;
+  color: white;
+}
+button.cancel:hover,
+button.delete:hover {
+  background-color: #922828;
+}
+
+/* Blu elegante: modifica */
+button.edit {
+  background-color: #3b5998; /* blu soft scuro */
+  color: white;
+}
+button.edit:hover {
+  background-color: #304b83;
+}
+
+/* ===== Table Styling elegante e scura ===== */
+table {
+  width: 90%;
+  max-width: 700px;
+  margin: 0 auto;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  table-layout: fixed;
+  font-size: 0.9rem;
+}
+
+th, td {
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: middle;
+  word-wrap: break-word;
+}
+
+thead {
+  background-color: #4a5568; /* blu-grigio scuro */
+  color: #edf2f7; /* testo chiaro */
+  text-transform: uppercase;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f7f8fa;
+}
+
+tbody tr:hover {
+  background-color: #dbe2ea;
+}
+
+/* Colonna Azioni — bottoni affiancati */
+th:nth-child(4),
+td:nth-child(4) {
+  width: 150px;
+  text-align: center;
+}
+
+td:nth-child(4) {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+td button {
+  padding: 5px 10px;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* ===== Misc ===== */
+hr {
+  border: none;
+  border-top: 1px solid #b0b0b0;
+  margin: 1.5rem 0;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 800px) {
+  .forms-container {
+    flex-direction: column;
+  }
+  .form-box {
+    max-width: 100%;
+  }
+  table {
+    width: 100%;
+  }
+  th:nth-child(4),
+  td:nth-child(4) {
+    width: auto;
+  }
+}

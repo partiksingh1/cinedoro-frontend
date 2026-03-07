@@ -16,4 +16,16 @@ export class DirectorService {
     return this.http.get<Director[]>(this.apiUrl);
   }
 
+  create(director: Director): Observable<Director> {
+    return this.http.post<Director>(this.apiUrl, director);
+  }
+
+  update(director: Director): Observable<Director> {
+    return this.http.put<Director>(`${this.apiUrl}/${director.id}`, director);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
 }

@@ -12,6 +12,8 @@ import { Login } from './features/auth/login/login';
 import { UserRegistration } from './features/auth/register/register';
 import { DirectorListComponent } from './features/admin/directors/director-list.component';
 import { CinemaService } from './features/admin/cinema-service/cinema-service';
+import { AdminScreening } from './features/admin/screening/admin-screening';
+
 export const routes: Routes = [
     { path: '', component: FilmListComponent },
     { path: 'login', component: Login },
@@ -58,5 +60,9 @@ export const routes: Routes = [
     {
         path: 'admin/films/edit/:id',
         component: AdminFilmListComponent
+    },
+    {
+        path: 'admin/screenings',
+        component: AdminScreening
     }
 ];
