@@ -44,6 +44,10 @@ export class DirectorListComponent implements OnInit {
     }
 
     createDirector() {
+        if (!this.newDirector.firstName.trim() || !this.newDirector.lastName.trim()) {
+        alert("Inserisci nome e cognome del regista!");
+        return;
+        }
         this.directorService.create(this.newDirector)
             //serve per "pulire" il form dopo l'invio
             .subscribe(() => {
