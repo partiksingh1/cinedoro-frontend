@@ -32,4 +32,9 @@ export class FilmService {
         return this.http.delete(`${this.api}/${id}`)
     }
 
+    // Chiamata al backend per ottenere i film suggeriti per un utente specifico.
+    getSuggestedForUser(userId: number): Observable<Film[]> {
+    return this.http.get<Film[]>(`${this.api}/suggested?userId=${userId}`)
+  }
+
 }

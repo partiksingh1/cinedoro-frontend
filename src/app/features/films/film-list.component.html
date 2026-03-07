@@ -1,40 +1,61 @@
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
 
-        <h2>Movies</h2>
+    <!-- Sezione suggeriti solo se loggato -->
+    <div *ngIf="isLoggedIn" class="mb-5">
+
+        <div *ngIf="loadingSuggested">
+            <p>Caricamento suggerimenti...</p>
+        </div>
+
+        <div *ngIf="!loadingSuggested && suggestedFilms.length > 0">
+            <h2>Suggeriti Per Te</h2>
+            <p>Basati sui generi dei film che hai già prenotato</p>
+            <div class="row">
+                <div class="col-md-3" *ngFor="let film of suggestedFilms">
+                    <div class="card mb-3 border-warning">
+                        <div class="card-body">
+                            <span class="badge bg-warning text-dark mb-2">⭐ Suggerito</span>
+                            <h5 class="card-title">{{ film.title }}</h5>
+                            <p class="card-text">{{ film.description }}</p>
+                            <p>📅 Uscita: {{ film.releaseDate }}</p>
+                            <button class="btn btn-warning"
+                                [routerLink]="['/film/detail', film.id]">
+                                Scopri
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!loadingSuggested && suggestedFilms.length === 0">
+            <h2>Suggeriti Per Te</h2>
+            <p>Prenota qualche film per ricevere suggerimenti personalizzati!</p>
+        </div>
 
     </div>
 
+    <!-- Lista film esistente -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Movies</h2>
+    </div>
+
     <div class="row">
-
         <div class="col-md-4" *ngFor="let film of films$ | async">
-
             <div class="card mb-3">
-
                 <div class="card-body">
-
                     <h5 class="card-title">{{ film.title }}</h5>
-
                     <p class="card-text">{{ film.description }}</p>
-
-                    <p>
-                        Duration: {{ film.durationMinutes }} min
-                    </p>
-
+                    <p>Duration: {{ film.durationMinutes }} min</p>
                     <div class="d-flex gap-2">
-
-                        <button class="btn btn-primary" [routerLink]="['/screenings/film', film.id]">
+                        <button class="btn btn-primary"
+                            [routerLink]="['/screenings/film', film.id]">
                             View Screenings
                         </button>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
 
 </div>

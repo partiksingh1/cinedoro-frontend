@@ -67,6 +67,9 @@ export class UserService {
         if (data.user?.role) {
             localStorage.setItem('role', data.user.role);
         }
+        if (data.user?.id) {
+        localStorage.setItem('userId', String(data.user.id)); // salvo anche l'id dell'utente
+    }
     }
 
     // Legge il token salvato nel browser.
@@ -101,5 +104,13 @@ export class UserService {
         localStorage.removeItem('token');
         // Quando esco, rimuovo anche il ruolo per evitare che restino dati della sessione precedente nel browser.
         localStorage.removeItem('role');
+        localStorage.removeItem('userId'); // rimuovo anche l'id dell'utente
     }
+
+    // Restituisce l'id dell'utente salvato dopo il login
+    // Serve per identificare l'utente loggato e fare chiamate al backend che richiedono l'id
+    getUserId(): number | null {
+    const id = localStorage.getItem('userId');
+    return id ? Number(id) : null;
+}
 }
