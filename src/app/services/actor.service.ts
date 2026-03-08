@@ -13,7 +13,7 @@ export interface Actor {
     providedIn: 'root',
 })
 export class ActorService {
-    private apiUrl = '/api/actors';
+    private apiUrl = 'http://localhost:8080/api/actors';
 
     constructor(private http: HttpClient) { }
 

@@ -1,14 +1,14 @@
 <div class="wizard-container">
-
     <!-- Header -->
-    <div class="header">
+    <header class="header">
+        <h1 class="title">Cinedoro Cinema</h1>
+    </header>
 
-        <div class="search-bar">
-            <input type="text" placeholder="Search movies..." [(ngModel)]="searchQuery" />
-
-            <button (click)="searchFilms()">Search</button>
+    <div class="header-buttons">
+        <div class="top-actions">
+            <button routerLink="/films">Explore Films</button>
+            <button routerLink="/my-bookings">My bookings</button>
         </div>
-
     </div>
 
     <!-- Films Grid -->
@@ -57,5 +57,4 @@
             </div>
         </div>
     </section>
-
 </div>

@@ -1,0 +1,11 @@
+.film-form .form-label {
+  font-weight: 500;
+}
+
+.img-preview {
+  max-width: 250px;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}

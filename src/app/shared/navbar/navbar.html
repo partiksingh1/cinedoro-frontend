@@ -6,20 +6,28 @@
         </div>
 
         <ul class="nav-links">
-            <li><a routerLink="/" routerLinkActive="active">Home</a></li>
-            <li><a routerLink="/films" routerLinkActive="active">Films</a></li>
-            <li><a routerLink="/my-bookings" routerLinkActive="active">My Bookings</a></li>
-            <li><a routerLink="/profile" routerLinkActive="active">Profile</a></li>
-            <li *ngIf="isAdmin"><a routerLink="/admin" routerLinkActive="active">Admin</a></li>
+            <li>
+                <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+            </li>
+            <li>
+                <a routerLink="/films" routerLinkActive="active">Films</a>
+            </li>
+            <li>
+                <a routerLink="/my-bookings" routerLinkActive="active">My Bookings</a>
+            </li>
+            <li>
+                <a routerLink="/profile" routerLinkActive="active">Profile</a>
+            </li>
+            <li *ngIf="isAdmin">
+                <a routerLink="/admin" routerLinkActive="active">Admin</a>
+            </li>
         </ul>
 
         <div class="nav-right">
-            @if (!authService.isLoggedIn()) {
-            <a routerLink="/login">Login</a>
-            <a routerLink="/register">Registrati</a>
-            } @else {
-            <button type="button" (click)="logout()">Logout</button>
-            }
+            <a *ngIf="!authService.isLoggedIn()" routerLink="/login">Login</a>
+            <a *ngIf="!authService.isLoggedIn()" routerLink="/register">Registrati</a>
+            <button *ngIf="authService.isLoggedIn()" type="button" (click)="logout()">Logout</button>
         </div>
+
     </div>
 </nav>

@@ -1,62 +1,80 @@
-.container {
-  max-width: 1000px;
-  margin: auto;
-  padding: 20px;
+/* Page background */
+
+body {
+  background: #faf7f2;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
 }
+
+/* Booking card */
 
 .booking-card {
-  border: 1px solid #ddd;
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 22px;
+
+  background: white;
   border-radius: 10px;
-  padding: 20px;
-  margin-top: 20px;
+
+  border: 1px solid #eee;
+  border-left: 6px solid #7f1d1d;
+
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+
+  transition: all 0.25s ease;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.booking-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
 }
 
-.details {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+/* Film title */
+
+.booking-card h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  color: #7f1d1d;
+  font-weight: 600;
 }
 
-.badge {
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 12px;
+/* Paragraphs */
+
+.booking-card p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #555;
 }
 
-.upcoming {
-  background: #22c55e;
-  color: white;
+/* Date + time */
+
+.booking-card p:nth-of-type(1) {
+  font-weight: 500;
+  color: #333;
 }
 
-.past {
-  background: #9ca3af;
-  color: white;
+/* Price */
+
+.booking-card p:nth-of-type(2) {
+  font-weight: 600;
+  color: #7f1d1d;
 }
 
-.seat {
-  margin-right: 10px;
-  background: #f3f3f3;
-  padding: 5px;
-  border-radius: 5px;
+/* Seats container */
+
+.booking-card p:nth-of-type(3) {
+  margin-top: 10px;
 }
 
-.price {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
+/* Seat badge */
 
-.cancel-btn {
-  background: red;
-  color: white;
-  border: none;
-  padding: 10px 15px;
+.booking-card span {
+  display: inline-block;
+  margin: 4px 6px 0 0;
+  padding: 4px 8px;
+
+  background: #f5efe0;
+  color: #7f1d1d;
+
   border-radius: 6px;
-  cursor: pointer;
+  font-size: 12px;
 }

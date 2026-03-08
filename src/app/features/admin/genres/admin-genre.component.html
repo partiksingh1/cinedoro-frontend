@@ -1,0 +1,35 @@
+<div class="genre-container">
+
+    <h2>Manage Genres</h2>
+
+    <div class="create-box">
+        <input type="text" placeholder="Genre name" [(ngModel)]="newGenre.name" />
+
+        <button (click)="createGenre()">Add Genre</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Genre Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let genre of genres">
+                <td>{{genre.id}}</td>
+                <td>{{genre.name}}</td>
+
+                <td>
+                    <button class="delete-btn" (click)="deleteGenre(genre.id)">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+
+    </table>
+
+</div>

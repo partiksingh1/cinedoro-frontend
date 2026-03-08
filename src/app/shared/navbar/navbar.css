@@ -1,81 +1,118 @@
+/* Navbar */
+
 .navbar {
-  background: #111;
-  padding: 10px 0;
+  background: #7f1d1d;
+  color: white;
+  border-bottom: 2px solid #d4af37;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
+
+/* Container */
 
 .navbar-container {
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+  margin: auto;
+  padding: 14px 20px;
 
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 }
 
-/* LOGO */
+/* Logo */
+
 .logo {
   font-size: 20px;
-  font-weight: bold;
-  color: white;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
-/* LINKS CENTRALI */
+/* Nav Links */
+
 .nav-links {
   list-style: none;
   display: flex;
-  gap: 22px;
+  gap: 28px;
   margin: 0;
   padding: 0;
 }
 
 .nav-links a {
-  color: white;
   text-decoration: none;
-  opacity: 0.85;
-  transition: opacity 0.2s ease;
+  color: #f8e9d2;
+  font-size: 15px;
+  font-weight: 500;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+/* Hover underline */
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 0%;
+  height: 2px;
+  background: #d4af37;
+  transition: width 0.25s ease;
 }
 
 .nav-links a:hover {
-  opacity: 1;
+  color: white;
 }
 
-/* LINK ATTIVO ANGULAR */
-.nav-links a.active {
-  border-bottom: 2px solid #f5c518;
+.nav-links a:hover::after {
+  width: 100%;
 }
 
-/* DESTRA (login / logout) */
+/* Active route */
+
+.active {
+  color: white;
+}
+
+.active::after {
+  width: 100%;
+}
+
+/* Right side */
+
 .nav-right {
   display: flex;
   gap: 14px;
   align-items: center;
 }
 
+/* Right links */
+
 .nav-right a {
-  color: white;
   text-decoration: none;
-  opacity: 0.9;
+  color: #f8e9d2;
+  font-size: 14px;
+  transition: color 0.2s;
 }
 
 .nav-right a:hover {
-  opacity: 1;
+  color: white;
 }
 
-/* BOTTONE LOGOUT */
+/* Logout button */
+
 .nav-right button {
   padding: 6px 12px;
-  border-radius: 8px;
-  border: 1px solid #444;
-  background: #222;
+  border-radius: 6px;
+  border: 1px solid #d4af37;
+  background: transparent;
   color: white;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .nav-right button:hover {
-  background: #333;
+  background: #d4af37;
+  color: #450a0a;
 }

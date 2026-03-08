@@ -1,15 +1,41 @@
-<h2>Screenings</h2>
+<!-- <div class="screening-page" *ngIf="!loading; else loadingTemplate">
+    <ng-container *ngIf="film$ | async as film; else notFoundTemplate">
+        <div class="film-header">
+            <h1>{{ film.title }}</h1>
+            <p class="film-details">
+                {{ film.durationMinutes }} min | Released: {{ film.releaseDate | date }}
+            </p>
+            <p class="film-description">{{ film.description }}</p>
+        </div>
 
-<div *ngFor="let screening of screenings$ | async" class="screening-card">
+        <div class="screenings-section">
+            <h2>Showtimes</h2>
 
-    <p>Date: {{screening.screeningDate}}</p>
+            <ng-container *ngIf="Object.keys(groupedScreenings).length === 0; else screeningsList">
+                <p>No screenings available for this film.</p>
+            </ng-container>
 
-    <p>Time: {{screening.screeningTime}}</p>
-
-    <p>Price: {{screening.basePrice}} €</p>
-
-    <button [routerLink]="['/booking', screening.id]">
-        Book
-    </button>
-
+            <ng-template #screeningsList>
+                <div *ngFor="let date of groupedScreenings | keyvalue" class="screening-date-group">
+                    <h3>{{ formatDate(date.key) }}</h3>
+                    <div class="screening-cards">
+                        <div *ngFor="let screening of date.value" class="screening-card">
+                            <a [routerLink]="['/booking', screening.id]">
+                                <div class="screening-time">{{ formatTime(screening.screeningTime) }}</div>
+                                <div class="screening-price">€{{ screening.basePrice }}</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+    </ng-container>
 </div>
+
+<ng-template #loadingTemplate>
+    <div class="loading">Loading film details...</div>
+</ng-template>
+
+<ng-template #notFoundTemplate>
+    <div class="not-found">Film not found.</div>
+</ng-template> -->

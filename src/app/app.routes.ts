@@ -6,7 +6,6 @@ import { AdminComponent } from './features/admin/admin.component';
 import { FilmDetail } from './features/film-detail/film-detail';
 import { BookingComponent } from './features/booking/booking';
 import { AdminFilmListComponent } from './features/admin/films/film-list.component';
-import { GenreListComponent } from './features/admin/genres/genre-list.component';
 import { Login } from './features/auth/login/login';
 import { UserRegistration } from './features/auth/register/register';
 import { DirectorListComponent } from './features/admin/directors/director-list.component';
@@ -16,8 +15,11 @@ import { hall } from './features/admin/hall/hall';
 import { Screenings } from './features/admin/screenings/screenings';
 import { CinemaServiceComponent } from './features/admin/cinema-service/cinema-service';
 import { ActorComponent } from './features/admin/actor/actor';
+import { AdminFilmCreateComponent } from './features/admin/films/film.create';
+import { AdminGenreComponent } from './features/admin/genres/admin-genre.component';
+import { Home } from './features/home/home';
 export const routes: Routes = [
-    { path: '', component: FilmListComponent },
+    { path: '', component: Home },
     { path: 'login', component: Login },
     { path: 'register', component: UserRegistration },
     { path: 'films', component: FilmListComponent },
@@ -50,7 +52,7 @@ export const routes: Routes = [
     },
     {
         path: 'admin/genres',
-        component: GenreListComponent
+        component: AdminGenreComponent
     },
     {
         path: 'admin/actors',
@@ -66,7 +68,7 @@ export const routes: Routes = [
     },
     {
         path: 'admin/films/create',
-        component: AdminFilmListComponent
+        component: AdminFilmCreateComponent
     },
     {
         path: 'admin/films/edit/:id',
