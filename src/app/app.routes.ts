@@ -3,7 +3,6 @@ import { FilmListComponent } from './features/films/film-list.component';
 import { ScreeningByFilmComponent } from './features/screenings/screening-by-film/screening-by-film';
 import { ScreeningByDateComponent } from './features/screenings/screening-by-date/screening-by-date';
 import { AdminComponent } from './features/admin/admin.component';
-import { ActorListComponent } from './features/actors/actor-list.component';
 import { FilmDetail } from './features/film-detail/film-detail';
 import { BookingComponent } from './features/booking/booking';
 import { AdminFilmListComponent } from './features/admin/films/film-list.component';
@@ -11,9 +10,12 @@ import { GenreListComponent } from './features/admin/genres/genre-list.component
 import { Login } from './features/auth/login/login';
 import { UserRegistration } from './features/auth/register/register';
 import { DirectorListComponent } from './features/admin/directors/director-list.component';
-import { CinemaService } from './features/admin/cinema-service/cinema-service';
 import { TicketComponent } from './features/tickets/tickets';
 import { MyBookingsComponent } from './features/my-bookings/my-bookings.component';
+import { hall } from './features/admin/hall/hall';
+import { Screenings } from './features/admin/screenings/screenings';
+import { CinemaServiceComponent } from './features/admin/cinema-service/cinema-service';
+import { ActorComponent } from './features/admin/actor/actor';
 export const routes: Routes = [
     { path: '', component: FilmListComponent },
     { path: 'login', component: Login },
@@ -43,12 +45,16 @@ export const routes: Routes = [
         component: AdminFilmListComponent
     },
     {
+        path: 'admin/halls',
+        component: hall
+    },
+    {
         path: 'admin/genres',
         component: GenreListComponent
     },
     {
         path: 'admin/actors',
-        component: ActorListComponent
+        component: ActorComponent
     },
     {
         path: 'admin/directors',
@@ -56,7 +62,7 @@ export const routes: Routes = [
     },
     {
         path: 'admin/cinema-service',
-        component: CinemaService
+        component: CinemaServiceComponent
     },
     {
         path: 'admin/films/create',
@@ -66,8 +72,8 @@ export const routes: Routes = [
         path: 'admin/films/edit/:id',
         component: AdminFilmListComponent
     },
-    //     {
-    //     path: 'admin/screenings',
-    //     component: AdminScreening
-    // }
+    {
+        path: 'admin/screenings',
+        component: Screenings
+    }
 ];

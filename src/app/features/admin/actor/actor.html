@@ -1,1 +1,84 @@
-<p>actor works!</p>
+<div class="actor-container">
+    <h2>Actors</h2>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading">Loading actors...</div>
+
+    <!-- Actor List -->
+    <div *ngIf="!loading && actors.length > 0">
+        <table class="actors-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Birthdate</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let actor of actors">
+                    <td>{{ actor.name }}</td>
+                    <td>{{ actor.surname }}</td>
+                    <td>{{ actor.birthdate | date:'yyyy-MM-dd' }}</td>
+                    <td>
+                        <button class="btn edit-btn" (click)="showEditActorForm(actor)">Edit</button>
+                        <button class="btn delete-btn" (click)="deleteActor(actor.id!)">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div *ngIf="!loading && actors.length === 0">
+        <p>No actors found.</p>
+    </div>
+
+    <!-- Create Actor Button -->
+    <button class="btn create-btn" *ngIf="!showCreateForm" (click)="showCreateActorForm()">Add Actor</button>
+
+    <!-- Create Actor Form -->
+    <div *ngIf="showCreateForm" class="actor-form">
+        <h3>Create Actor</h3>
+        <form (ngSubmit)="createActor()">
+            <label>
+                Name:
+                <input type="text" [(ngModel)]="newActor.name" name="name" required />
+            </label>
+            <label>
+                Surname:
+                <input type="text" [(ngModel)]="newActor.surname" name="surname" required />
+            </label>
+            <label>
+                Birthdate:
+                <input type="date" [(ngModel)]="newActor.birthdate" name="birthdate" />
+            </label>
+            <div class="form-actions">
+                <button type="submit" class="btn submit-btn">Create</button>
+                <button type="button" class="btn cancel-btn" (click)="cancelCreate()">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Edit Actor Form -->
+    <div *ngIf="showEditForm && editActor" class="actor-form">
+        <h3>Edit Actor</h3>
+        <form (ngSubmit)="updateActor()">
+            <label>
+                Name:
+                <input type="text" [value]="editActor.name" (input)="onEditInputChange($event,'name')" required />
+            </label>
+            <label>
+                Surname:
+                <input type="text" [value]="editActor.surname" (input)="onEditInputChange($event,'surname')" required />
+            </label>
+            <label>
+                Birthdate:
+                <input type="date" [value]="editActor.birthdate" (input)="onEditInputChange($event,'birthdate')" />
+            </label>
+            <div class="form-actions">
+                <button type="submit" class="btn submit-btn">Update</button>
+                <button type="button" class="btn cancel-btn" (click)="cancelEdit()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>

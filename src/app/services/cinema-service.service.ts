@@ -18,6 +18,19 @@ export class CinemaServiceService {
     getAllServices(): Observable<CinemaService[]> {
         return this.http.get<CinemaService[]>(this.baseUrl);
     }
+
+    createService(service: Partial<CinemaService>): Observable<CinemaService> {
+        return this.http.post<CinemaService>(this.baseUrl, service);
+    }
+
+    updateService(id: number, service: Partial<CinemaService>): Observable<CinemaService> {
+        return this.http.put<CinemaService>(`${this.baseUrl}/${id}`, service);
+    }
+
+    deleteService(id: number): Observable<void> {
+        return this.http.delete<void>(`${this.baseUrl}/${id}`);
+    }
+
     bookService(request: { bookingId: number, extraProductId: number, quantity: number }): Observable<void> {
         return this.http.post<void>(`${this.baseUrl}/book`, request);
     }

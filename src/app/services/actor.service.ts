@@ -1,0 +1,39 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+export interface Actor {
+    id?: number;
+    name: string;
+    surname: string;
+    birthdate?: string; // optional, ISO string format
+}
+
+@Injectable({
+    providedIn: 'root',
+})
+export class ActorService {
+    private apiUrl = '/api/actors';
+
+    constructor(private http: HttpClient) { }
+
+    getAllActors(): Observable<Actor[]> {
+        return this.http.get<Actor[]>(this.apiUrl);
+    }
+
+    getActorById(id: number): Observable<Actor> {
+        return this.http.get<Actor>(`${this.apiUrl}/${id}`);
+    }
+
+    createActor(actor: Actor): Observable<Actor> {
+        return this.http.post<Actor>(this.apiUrl, actor);
+    }
+
+    updateActor(id: number, actor: Actor): Observable<void> {
+        return this.http.put<void>(`${this.apiUrl}/${id}`, actor);
+    }
+
+    deleteActor(id: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    }
+}

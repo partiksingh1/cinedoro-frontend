@@ -26,5 +26,18 @@ export class ScreeningService {
     getScreeningById(id: number): Observable<Screening> {
         return this.http.get<Screening>(`${this.apiUrl}/${id}`);
     }
+    // Create a new screening
+    createScreening(screening: Screening): Observable<Screening> {
+        return this.http.post<any>(this.apiUrl, screening)
+    }
 
+    // Update an existing screening
+    updateScreening(id: number, screening: Screening): Observable<Screening> {
+        return this.http.put<any>(`${this.apiUrl}/${id}`, screening)
+    }
+
+    // Delete a screening by ID
+    deleteScreening(id: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${id}`)
+    }
 }

@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Hall } from '../features/admin/hall/hall';
-import { CreateHallRequest } from '../models/hall';
+import { Hall, CreateHallRequest } from '../models/hall';
 @Injectable({
     providedIn: 'root',
 })
@@ -21,5 +20,13 @@ export class HallService {
 
     createHall(hall: CreateHallRequest): Observable<Hall> {
         return this.http.post<Hall>(this.apiUrl, hall);
+    }
+
+    updateHall(id: number, hall: Hall): Observable<Hall> {
+        return this.http.put<Hall>(`${this.apiUrl}/${id}`, hall);
+    }
+
+    deleteHall(id: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${id}`);
     }
 }
