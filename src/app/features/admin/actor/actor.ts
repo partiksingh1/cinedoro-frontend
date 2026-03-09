@@ -13,7 +13,7 @@ import { HttpClientModule } from '@angular/common/http';
 })
 export class ActorComponent implements OnInit {
   actors: Actor[] = [];
-  newActor: Partial<Actor> = { name: '', surname: '', birthdate: '' };
+  newActor: Partial<Actor> = { firstName: '', lastName: '', birthdate: '' };
   editActor: Partial<Actor> | null = null;
   editingActorId: number | null = null;
   showCreateForm = false;
@@ -42,7 +42,7 @@ export class ActorComponent implements OnInit {
 
   showCreateActorForm(): void {
     this.showCreateForm = true;
-    this.newActor = { name: '', surname: '', birthdate: '' };
+    this.newActor = { firstName: '', lastName: '', birthdate: '' };
   }
 
   cancelCreate(): void {
@@ -50,7 +50,7 @@ export class ActorComponent implements OnInit {
   }
 
   createActor(): void {
-    if (this.newActor.name && this.newActor.surname) {
+    if (this.newActor.firstName && this.newActor.lastName) {
       this.actorService.createActor(this.newActor as Actor).subscribe({
         next: () => {
           this.loadActors();

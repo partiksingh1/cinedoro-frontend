@@ -17,8 +17,8 @@
             </thead>
             <tbody>
                 <tr *ngFor="let actor of actors">
-                    <td>{{ actor.name }}</td>
-                    <td>{{ actor.surname }}</td>
+                    <td>{{ actor.firstName }}</td>
+                    <td>{{ actor.lastName }}</td>
                     <td>{{ actor.birthdate | date:'yyyy-MM-dd' }}</td>
                     <td>
                         <button class="btn edit-btn" (click)="showEditActorForm(actor)">Edit</button>
@@ -42,11 +42,11 @@
         <form (ngSubmit)="createActor()">
             <label>
                 Name:
-                <input type="text" [(ngModel)]="newActor.name" name="name" required />
+                <input type="text" [(ngModel)]="newActor.firstName" name="name" required />
             </label>
             <label>
                 Surname:
-                <input type="text" [(ngModel)]="newActor.surname" name="surname" required />
+                <input type="text" [(ngModel)]="newActor.lastName" name="surname" required />
             </label>
             <label>
                 Birthdate:
@@ -65,11 +65,12 @@
         <form (ngSubmit)="updateActor()">
             <label>
                 Name:
-                <input type="text" [value]="editActor.name" (input)="onEditInputChange($event,'name')" required />
+                <input type="text" [value]="editActor.firstName" (input)="onEditInputChange($event,'name')" required />
             </label>
             <label>
                 Surname:
-                <input type="text" [value]="editActor.surname" (input)="onEditInputChange($event,'surname')" required />
+                <input type="text" [value]="editActor.lastName" (input)="onEditInputChange($event,'surname')"
+                    required />
             </label>
             <label>
                 Birthdate:
