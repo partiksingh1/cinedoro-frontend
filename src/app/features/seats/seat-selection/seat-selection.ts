@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common'
 import { BookingService } from '../../../services/booking.service'
 import { ScreeningService } from '../../../services/screening.service'
 import { UserService } from '../../../services/user.service'
-import { CinemaService, CinemaServiceService } from '../../../services/cinema-service.service' // New Service
+import { CinemaService, CinemaServiceService } from '../../../services/cinema-service.service'
 import { Screening } from '../../../models/screening'
 import { forkJoin, switchMap, map, tap } from 'rxjs'
 import { FormsModule } from '@angular/forms'
@@ -30,8 +30,8 @@ export class SeatSelectionComponent implements OnInit {
   loading = false
   errorMessage = ''
 
-  cinemaServices: CinemaService[] = [] // To store available cinema services
-  selectedServices: { [serviceId: number]: number } = {} // To track selected services and quantities
+  cinemaServices: CinemaService[] = []
+  selectedServices: { [serviceId: number]: number } = {}
 
   constructor(
     private router: Router,
@@ -41,77 +41,113 @@ export class SeatSelectionComponent implements OnInit {
     private bookingService: BookingService,
     private screeningService: ScreeningService,
     private userService: UserService,
-    private cinemaService: CinemaServiceService // Inject CinemaService
+    private cinemaService: CinemaServiceService
   ) { }
 
   ngOnInit() {
-    // Validate user is logged in
+
+    console.log("SeatSelectionComponent initialized")
+
     if (!this.userService.isLoggedIn()) {
-      alert('Please log in to continue');
-      this.router.navigate(['/login']);
-      return;
+      console.log("User not logged in")
+      alert('Please log in to continue')
+      this.router.navigate(['/login'])
+      return
     }
 
-    this.screeningId = Number(this.route.snapshot.paramMap.get('screeningId'))
+    console.log("User logged in")
 
-    // Load screening data, then seats and occupied seats
+    this.screeningId = Number(this.route.snapshot.paramMap.get('screeningId'))
+    console.log("Screening ID from route:", this.screeningId)
+
     this.screeningService.getScreeningById(this.screeningId).subscribe({
       next: screening => {
+        console.log("Screening loaded:", screening)
+
         this.screening = screening
         this.loadSeats()
         this.loadOccupiedSeats()
       },
       error: err => {
+        console.error("Error loading screening:", err)
         this.errorMessage = 'Failed to load screening information'
-        console.error('Error loading screening', err)
       }
     })
 
-    // Load available cinema services (like popcorn, drinks)
     this.cinemaService.getAllServices().subscribe({
       next: services => {
-        this.cinemaServices = services;
+        console.log("Cinema services loaded:", services)
+        this.cinemaServices = services
       },
       error: err => {
+        console.error("Error loading cinema services:", err)
         this.errorMessage = 'Failed to load cinema services'
-        console.error('Error loading services', err)
       }
     })
   }
 
   getSelectedServicesTotal(): number {
-    let total = 0;
+    console.log("Calculating selected services total", this.selectedServices)
+
+    let total = 0
+
     for (const serviceId in this.selectedServices) {
       if (this.selectedServices.hasOwnProperty(serviceId)) {
-        const service = this.cinemaServices.find(s => s.id == parseInt(serviceId));
+
+        const service = this.cinemaServices.find(s => s.id == parseInt(serviceId))
+
+        console.log("Processing service:", service)
+
         if (service) {
-          total += this.selectedServices[serviceId] * service.price;
+          const quantity = this.selectedServices[serviceId]
+          const subtotal = quantity * service.price
+
+          console.log("Service subtotal:", subtotal)
+
+          total += subtotal
         }
       }
     }
-    return total;
+
+    console.log("Total services price:", total)
+
+    return total
   }
 
   bookSeats() {
+
+    console.log("Starting booking process")
+
     if (!this.screening) {
+      console.log("Screening not loaded")
       alert('Screening information not loaded')
-      return;
+      return
     }
 
     if (this.selectedSeats.length === 0) {
+      console.log("No seats selected")
       alert('Please select at least one seat')
-      return;
+      return
     }
 
-    // Get current user ID
+    console.log("Selected seats:", this.selectedSeats)
+    console.log("Selected services:", this.selectedServices)
+
     const userId = this.getCurrentUserId()
+    console.log("Current userId:", userId)
+
     if (!userId) {
+      console.log("User ID missing")
       alert('Please log in to complete the booking')
       this.router.navigate(['/login'])
-      return;
+      return
     }
 
-    const totalPrice = (this.selectedSeats.length * this.screening.basePrice) + this.getSelectedServicesTotal();
+    const totalPrice =
+      (this.selectedSeats.length * this.screening.basePrice)
+      + this.getSelectedServicesTotal()
+
+    console.log("Total booking price:", totalPrice)
 
     const bookingRequest = {
       userId: userId,
@@ -119,29 +155,46 @@ export class SeatSelectionComponent implements OnInit {
       totalPrice: totalPrice
     }
 
+    console.log("Booking request payload:", bookingRequest)
+
     this.loading = true
     this.errorMessage = ''
 
     this.bookingService.createBooking(bookingRequest).pipe(
+
       switchMap(booking => {
+
+        console.log("Booking created:", booking)
+
         const ticketRequests = this.selectedSeats.map(seatId => {
+
           const ticketRequest = {
             bookingId: booking.id,
             screeningId: this.screeningId,
             seatId: seatId,
             price: this.screening!.basePrice
           }
+
+          console.log("Creating ticket:", ticketRequest)
+
           return this.ticketService.createTicket(ticketRequest)
         })
 
-        // Book services (like popcorn, drinks)
         const serviceRequests = Object.entries(this.selectedServices).map(([serviceId, quantity]) => {
-          return this.cinemaService.bookService({
+
+          const serviceRequest = {
             bookingId: booking.id,
             extraProductId: parseInt(serviceId),
             quantity: quantity
-          })
+          }
+
+          console.log("Booking service:", serviceRequest)
+
+          return this.cinemaService.bookService(serviceRequest)
         })
+
+        console.log("Ticket requests:", ticketRequests)
+        console.log("Service requests:", serviceRequests)
 
         return forkJoin([...ticketRequests, ...serviceRequests]).pipe(
           map(() => booking.id)
@@ -149,86 +202,147 @@ export class SeatSelectionComponent implements OnInit {
       }),
 
       tap(bookingId => {
+        console.log("All tickets and services booked. Booking ID:", bookingId)
+
         this.loading = false
         this.router.navigate(['/ticket', bookingId])
       })
+
     ).subscribe({
+      next: response => {
+        console.log("Booking pipeline completed:", response)
+      },
       error: err => {
+        console.error("Booking error:", err)
         this.loading = false
         this.errorMessage = 'Failed to complete booking. Please try again.'
-        console.error('Booking error:', err)
       }
     })
   }
 
-
   loadSeats() {
-    if (!this.screening) return;
+
+    if (!this.screening) {
+      console.log("Screening not available when loading seats")
+      return
+    }
+
+    console.log("Loading seats for hall:", this.screening.hallId)
 
     this.seatService.getSeatsByHall(this.screening.hallId)
       .subscribe({
         next: seats => {
+          console.log("Seats loaded:", seats)
+
           this.seats = seats
           this.buildSeatMatrix()
         },
         error: err => {
+          console.error("Error loading seats:", err)
           this.errorMessage = 'Failed to load seat information'
-          console.error('Error loading seats', err)
         }
       })
   }
 
   loadOccupiedSeats() {
+
+    console.log("Loading occupied seats for screening:", this.screeningId)
+
     this.ticketService.getOccupiedSeats(this.screeningId)
       .subscribe({
         next: data => {
+          console.log("Occupied seats:", data)
+
           this.occupiedSeats = data
         },
         error: err => {
+          console.error("Error loading occupied seats:", err)
           this.errorMessage = 'Failed to load seat availability'
-          console.error('Error loading occupied seats', err)
         }
       })
   }
 
   buildSeatMatrix() {
+
+    console.log("Building seat matrix")
+
     const rows: { [key: number]: Seat[] } = {}
 
     this.seats.forEach(seat => {
+
       if (!rows[seat.rowNumber]) {
         rows[seat.rowNumber] = []
       }
+
       rows[seat.rowNumber].push(seat)
     })
 
     this.seatMatrix = Object.values(rows).map(row =>
       row.sort((a, b) => a.seatNumber - b.seatNumber)
     )
+
+    console.log("Seat matrix:", this.seatMatrix)
   }
 
   selectSeat(seat: Seat) {
-    if (this.isOccupied(seat.id)) return
+
+    console.log("Seat clicked:", seat)
+
+    if (this.isOccupied(seat.id)) {
+      console.log("Seat is occupied:", seat.id)
+      return
+    }
 
     if (this.selectedSeats.includes(seat.id)) {
+
+      console.log("Removing selected seat:", seat.id)
+
       this.selectedSeats = this.selectedSeats.filter(id => id !== seat.id)
+
     } else {
+
+      console.log("Adding selected seat:", seat.id)
+
       this.selectedSeats.push(seat.id)
     }
+
+    console.log("Current selected seats:", this.selectedSeats)
   }
 
   isOccupied(seatId: number) {
-    return this.occupiedSeats.includes(seatId)
+    const occupied = this.occupiedSeats.includes(seatId)
+
+    if (occupied) {
+      console.log("Seat", seatId, "is occupied")
+    }
+
+    return occupied
   }
 
   isSelected(seatId: number) {
-    return this.selectedSeats.includes(seatId)
+    const selected = this.selectedSeats.includes(seatId)
+
+    if (selected) {
+      console.log("Seat", seatId, "is selected")
+    }
+
+    return selected
   }
 
   private getCurrentUserId(): number | null {
+
     const userIdStr = sessionStorage.getItem('userId') || localStorage.getItem('userId')
+
+    console.log("User ID from storage:", userIdStr)
+
     if (userIdStr) {
-      return parseInt(userIdStr, 10)
+      const parsed = parseInt(userIdStr, 10)
+      console.log("Parsed user ID:", parsed)
+      return parsed
     }
+
+    console.log("No user ID found in storage")
+
     return null
   }
 }

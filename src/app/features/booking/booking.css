@@ -1,199 +1,237 @@
-/* .seats-section {
-  margin: 2rem 0;
-  padding: 1.5rem;
-  background-color: #f5f5f5;
-  border-radius: 8px;
+.booking-page {
+  max-width: 1200px;
+  margin: auto;
+  padding: 30px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-.seats-section h3 {
-  margin-top: 0;
-  color: #333;
-  font-size: 1.3rem;
-  margin-bottom: 1rem;
+.back-btn {
+  margin-bottom: 20px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
 }
+
+.layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+}
+
+/* CARDS */
+
+.card {
+  background: white;
+  border-radius: 10px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.title {
+  margin: 0;
+}
+
+.subtitle {
+  color: #777;
+  margin-bottom: 20px;
+}
+
+/* SCREEN */
+
+.screen-wrapper {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.screen {
+  height: 8px;
+  background: linear-gradient(to bottom, #bbb, #eee);
+  border-radius: 20px;
+}
+
+.screen-text {
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* SEATS */
 
 .seat-row {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
   align-items: center;
+  margin-bottom: 10px;
 }
 
 .row-label {
-  min-width: 60px;
+  width: 70px;
   font-weight: bold;
-  color: #666;
 }
 
-.seat-row button {
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  border: 2px solid #ddd;
-  border-radius: 4px;
-  background-color: white;
-  color: #333;
-  font-weight: bold;
+.seats {
+  display: flex;
+  gap: 8px;
+}
+
+.seat {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: 2px solid #999;
+  background: white;
   cursor: pointer;
-  transition: all 0.3s ease;
 }
 
-.seat-row button:hover:not([disabled]) {
-  border-color: #007bff;
-  background-color: #e3f2fd;
-  transform: scale(1.05);
+.seat:hover {
+  transform: scale(1.1);
 }
 
-.seat-row button.selected {
-  background-color: #007bff;
+.seat.selected {
+  background: #007bff;
   color: white;
   border-color: #007bff;
 }
 
-.seat-row button.occupied {
-  background-color: #e0e0e0;
-  color: #999;
+.seat.occupied {
+  background: #ddd;
+  border-color: #bbb;
   cursor: not-allowed;
-  border-color: #999;
 }
 
-.seat-row button[disabled] {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
+/* LEGEND */
 
-.seat-legend {
+.legend {
   display: flex;
-  gap: 1.5rem;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #ddd;
-  font-size: 0.9rem;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
 }
 
-.legend-seat {
-  font-size: 1.2rem;
-  margin-right: 0.3rem;
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.legend-seat.selected {
-  color: #007bff;
+.seat-demo {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 2px solid #999;
 }
 
-.legend-seat.occupied {
-  color: #999;
+.seat-demo.available {
+  background: white;
 }
 
-.services-section {
-  margin: 2rem 0;
-  padding: 1.5rem;
-  background-color: #f5f5f5;
-  border-radius: 8px;
+.seat-demo.selected {
+  background: #007bff;
 }
 
-.services-section h3 {
-  margin-top: 0;
-  color: #333;
-  font-size: 1.3rem;
-  margin-bottom: 1rem;
+.seat-demo.occupied {
+  background: #ccc;
 }
+
+/* SERVICES */
 
 .service-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem;
-  background-color: white;
-  border-radius: 4px;
-  margin-bottom: 0.5rem;
-  border: 1px solid #ddd;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.service-name {
+  font-weight: bold;
+}
+
+.service-desc {
+  font-size: 13px;
+  color: #777;
+}
+
+.service-price {
+  font-size: 14px;
+  color: #333;
 }
 
 .service-controls {
   display: flex;
-  gap: 0.5rem;
   align-items: center;
+  gap: 10px;
 }
 
 .service-controls button {
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background-color: white;
+  width: 28px;
+  height: 28px;
   cursor: pointer;
+}
+
+/* SUMMARY */
+
+.summary-card {
+  background: white;
+  border-radius: 10px;
+  padding: 25px;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.summary-section {
+  margin-bottom: 20px;
+}
+
+.label {
   font-weight: bold;
-  transition: all 0.2s ease;
+  margin-bottom: 5px;
 }
 
-.service-controls button:hover {
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
+.seat-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
 }
 
-.service-controls span {
-  min-width: 30px;
-  text-align: center;
+.badge {
+  background: #eee;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 20px;
   font-weight: bold;
+  margin-top: 20px;
 }
 
-.booking-summary {
-  margin: 2rem 0;
-  padding: 1.5rem;
-  background-color: #fff8e1;
-  border-left: 4px solid #ffc107;
-  border-radius: 4px;
-}
-
-.booking-summary h3 {
-  margin-top: 0;
-  color: #333;
-}
-
-.booking-summary p {
-  margin: 0.5rem 0;
-  color: #666;
-  font-size: 0.95rem;
-}
-
-.total-price {
-  font-size: 1.5rem;
-  color: #e74c3c;
-  font-weight: bold;
-}
-
-.btn-confirm {
+.confirm-btn {
+  margin-top: 20px;
   width: 100%;
-  padding: 1rem;
-  margin-top: 1rem;
-  background-color: #28a745;
-  color: white;
+  padding: 12px;
+  font-size: 16px;
+  background: #007bff;
   border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  font-weight: bold;
+  color: white;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
 }
 
-.btn-confirm:hover:not([disabled]) {
-  background-color: #218838;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.confirm-btn:hover {
+  background: #0056b3;
 }
 
-.btn-confirm[disabled] {
-  background-color: #ccc;
-  cursor: not-allowed;
-  opacity: 0.7;
+.confirm-btn:disabled {
+  background: #ccc;
 }
 
-h2 {
-  color: #333;
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid #007bff;
-} */
+.loading {
+  text-align: center;
+  padding: 50px;
+}

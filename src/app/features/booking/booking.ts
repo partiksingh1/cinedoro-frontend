@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Observable, combineLatest, map, switchMap } from 'rxjs';
+import { Observable, combineLatest, map, switchMap, tap } from 'rxjs';
 import { Screening } from '../../models/screening';
 import { Film } from '../../models/film';
 import { SeatService } from '../../services/seat.service';
@@ -12,6 +12,7 @@ import { BookingService } from '../../services/booking.service';
 import { TicketService } from '../../services/ticket.service';
 import { UserService } from '../../services/user.service';
 import { Seat } from '../../models/seat';
+
 interface BookingViewModel {
   screening: Screening;
   film: Film;
@@ -28,7 +29,6 @@ interface BookingViewModel {
 })
 export class BookingComponent {
 
-  // Observables for reactive template
   bookingData$!: Observable<BookingViewModel>;
   selectedSeats: number[] = [];
   selectedServices: { [key: number]: number } = {};
@@ -47,40 +47,69 @@ export class BookingComponent {
     private ticketService: TicketService,
     private userService: UserService
   ) {
-    const screeningId = Number(this.route.snapshot.paramMap.get('screeningId'));
 
-    // Get current user ID from UserService
+    const screeningId = Number(this.route.snapshot.paramMap.get('screeningId'));
+    console.log('SCREENING ID FROM ROUTE:', screeningId);
+
     const userToken = this.userService.getToken();
+    console.log('USER TOKEN:', userToken);
+
     if (!userToken) {
       alert('Please log in to make a booking');
       this.router.navigate(['/login']);
       return;
     }
 
-    // Combine all observables into one reactive data stream
     this.bookingData$ = this.screeningService.getScreeningById(screeningId).pipe(
+
+      tap(screening => console.log('SCREENING RESPONSE:', screening)),
+
       switchMap(screening => {
-        // Load occupied seats for this screening
         return this.ticketService.getOccupiedSeats(screening.id || 0).pipe(
+          tap(occupied => console.log('OCCUPIED SEATS RESPONSE:', occupied)),
           map(occupied => ({ screening, occupiedSeats: occupied }))
         );
       }),
+
       switchMap(({ screening, occupiedSeats }) => {
+
+        console.log('OCCUPIED SEATS SET:', occupiedSeats);
         this.occupiedSeats = occupiedSeats;
+
         return combineLatest([
-          this.filmService.getFilmById(screening.filmId),
-          this.seatService.getSeatsByHall(screening.hallId),
-          this.cinemaServiceService.getAllServices()
+
+          this.filmService.getFilmById(screening.filmId).pipe(
+            tap(film => console.log('FILM RESPONSE:', film))
+          ),
+
+          this.seatService.getSeatsByHall(screening.hallId).pipe(
+            tap(seats => console.log('SEATS RESPONSE:', seats))
+          ),
+
+          this.cinemaServiceService.getAllServices().pipe(
+            tap(services => console.log('SERVICES RESPONSE:', services))
+          )
+
         ]).pipe(
-          map(([film, seats, services]) => ({ screening, film, seats, services }))
+          map(([film, seats, services]) => {
+
+            const viewModel = { screening, film, seats, services };
+
+            console.log('FINAL BOOKING VIEW MODEL:', viewModel);
+
+            return viewModel;
+          })
         );
       })
     );
   }
 
   toggleSeat(seatId: number) {
-    // Don't allow selecting occupied seats
+
+    console.log('TOGGLE SEAT CLICKED:', seatId);
+
     if (this.occupiedSeats.includes(seatId)) {
+      console.log('SEAT IS OCCUPIED, CANNOT SELECT');
       return;
     }
 
@@ -89,6 +118,8 @@ export class BookingComponent {
     } else {
       this.selectedSeats.push(seatId);
     }
+
+    console.log('SELECTED SEATS:', this.selectedSeats);
   }
 
   isSeatOccupied(seatId: number): boolean {
@@ -96,31 +127,47 @@ export class BookingComponent {
   }
 
   updateServiceQuantity(serviceId: number, quantity: number) {
+
+    console.log('SERVICE UPDATED:', serviceId, 'QTY:', quantity);
+
     if (quantity <= 0) {
       delete this.selectedServices[serviceId];
     } else {
       this.selectedServices[serviceId] = quantity;
     }
+
+    console.log('SELECTED SERVICES:', this.selectedServices);
   }
 
   calculateTotal(viewModel: BookingViewModel): number {
+
     const ticketsTotal = this.selectedSeats.length * viewModel.screening.basePrice;
+
     const servicesTotal = Object.entries(this.selectedServices)
       .reduce((sum, [id, qty]) => {
         const service = viewModel.services.find(s => s.id === Number(id));
         return sum + (service ? service.price * qty : 0);
       }, 0);
-    return ticketsTotal + servicesTotal;
+
+    const total = ticketsTotal + servicesTotal;
+
+    console.log('TOTAL PRICE CALCULATED:', total);
+
+    return total;
   }
 
   handleBooking(viewModel: BookingViewModel) {
+
+    console.log('BOOKING STARTED');
+
     if (this.selectedSeats.length === 0) {
       alert('Please select at least one seat');
       return;
     }
 
-    // Get current user ID from token or localStorage
     const userId = this.getCurrentUserId();
+    console.log('CURRENT USER ID:', userId);
+
     if (!userId) {
       alert('Please log in to complete the booking');
       this.router.navigate(['/login']);
@@ -128,30 +175,48 @@ export class BookingComponent {
     }
 
     if (this.bookingInProgress) {
+      console.log('BOOKING ALREADY IN PROGRESS');
       return;
     }
 
     this.bookingInProgress = true;
 
-    this.bookingService.createBooking({
+    const bookingPayload = {
       userId: userId,
       screeningId: viewModel.screening.id || 0,
       totalPrice: this.calculateTotal(viewModel)
-    }).subscribe({
+    };
+
+    console.log('CREATE BOOKING PAYLOAD:', bookingPayload);
+
+    this.bookingService.createBooking(bookingPayload).subscribe({
+
       next: booking => {
-        // Create all tickets in parallel
-        const ticketObservables = this.selectedSeats.map(seatId =>
-          this.ticketService.createTicket({
+
+        console.log('BOOKING CREATED:', booking);
+
+        const ticketObservables = this.selectedSeats.map(seatId => {
+
+          const payload = {
             bookingId: booking.id,
             screeningId: viewModel.screening.id || 0,
             seatId,
             price: viewModel.screening.basePrice
-          })
-        );
+          };
+
+          console.log('CREATE TICKET PAYLOAD:', payload);
+
+          return this.ticketService.createTicket(payload).pipe(
+            tap(ticket => console.log('TICKET CREATED:', ticket))
+          );
+        });
 
         combineLatest(ticketObservables).subscribe({
-          next: () => {
-            // If there are extra services, add them to the booking
+
+          next: tickets => {
+
+            console.log('ALL TICKETS CREATED:', tickets);
+
             const bookedServices = Object.entries(this.selectedServices)
               .filter(([_, qty]) => qty > 0)
               .map(([serviceId, qty]) => ({
@@ -160,55 +225,80 @@ export class BookingComponent {
                 quantity: qty
               }));
 
+            console.log('BOOKED SERVICES PAYLOAD:', bookedServices);
+
             if (bookedServices.length > 0) {
+
               this.bookingService.addServicesToBooking(bookedServices).subscribe({
-                next: () => {
+
+                next: res => {
+                  console.log('SERVICES ADDED TO BOOKING:', res);
                   this.router.navigate(['/ticket', booking.id]);
                   this.bookingInProgress = false;
                 },
+
                 error: err => {
-                  console.error('Failed to add services to booking', err);
-                  // Still navigate to ticket page even if services failed
+                  console.error('FAILED TO ADD SERVICES:', err);
                   this.router.navigate(['/ticket', booking.id]);
                   this.bookingInProgress = false;
                 }
+
               });
+
             } else {
+
+              console.log('NO EXTRA SERVICES SELECTED');
               this.router.navigate(['/ticket', booking.id]);
               this.bookingInProgress = false;
+
             }
           },
+
           error: err => {
-            console.error('Ticket creation failed', err);
-            alert('Failed to create tickets. Your booking may be incomplete. Please contact support.');
+            console.error('TICKET CREATION FAILED:', err);
+            alert('Failed to create tickets.');
             this.bookingInProgress = false;
           }
+
         });
+
       },
+
       error: err => {
-        console.error('Booking failed', err);
-        alert('Failed to create booking. Please try again.');
+        console.error('BOOKING CREATION FAILED:', err);
+        alert('Failed to create booking.');
         this.bookingInProgress = false;
       }
+
     });
   }
 
   private getCurrentUserId(): number | null {
-    // Try to get from sessionStorage or localStorage
+
     const userIdStr = localStorage.getItem('userId');
+
+    console.log('USER ID FROM LOCAL STORAGE:', userIdStr);
+
     if (userIdStr) {
       return parseInt(userIdStr, 10);
     }
-    // If not available, the user should log in
+
     return null;
   }
 
   getSeatsByRow(seats: Seat[]): { [row: number]: Seat[] } {
+
+    console.log('GROUPING SEATS BY ROW');
+
     const grouped: { [row: number]: Seat[] } = {};
+
     seats.forEach(seat => {
       if (!grouped[seat.rowNumber]) grouped[seat.rowNumber] = [];
       grouped[seat.rowNumber].push(seat);
     });
+
+    console.log('GROUPED SEATS:', grouped);
+
     return grouped;
   }
 

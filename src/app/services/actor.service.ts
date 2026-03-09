@@ -4,8 +4,8 @@ import { Observable } from 'rxjs';
 
 export interface Actor {
     id?: number;
-    name: string;
-    surname: string;
+    firstName: string;
+    lastName: string;
     birthdate?: string; // optional, ISO string format
 }
 
