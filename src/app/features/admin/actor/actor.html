@@ -1,10 +1,10 @@
 <div class="admin-container">
     <div class="header">
-        <h1 class="title">Manage Actors</h1>
+        <h1 class="title">Gestisci Attori</h1>
     </div>
 
     <!-- Loading -->
-    <div *ngIf="loading()" class="loading">Loading actors...</div>
+    <div *ngIf="loading()" class="loading">Caricamento attori...</div>
 
     <!-- Actor List -->
     <div *ngIf="!loading()">
@@ -12,20 +12,18 @@
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Surname</th>
-                        <th>Birthdate</th>
-                        <th>Actions</th>
+                        <th>Nome</th>
+                        <th>Cognome</th>
+                        <th>Azioni</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let actor of actors()">
                         <td>{{ actor.firstName }}</td>
                         <td>{{ actor.lastName }}</td>
-                        <td>{{ actor.birthdate | date:'yyyy-MM-dd' }}</td>
                         <td>
-                            <button class="btn btn-edit" (click)="showEditActorForm(actor)">Edit</button>
-                            <button class="btn btn-delete" (click)="deleteActor(actor.id!)">Delete</button>
+                            <button class="btn btn-edit" (click)="showEditActorForm(actor)">Modifica</button>
+                            <button class="btn btn-delete" (click)="deleteActor(actor.id!)">Elimina</button>
                         </td>
                     </tr>
                 </tbody>
@@ -33,57 +31,51 @@
         </div>
         <ng-template #noActors>
             <div class="no-data">
-                <p>No actors found.</p>
+                <p>Nessun attore trovato.</p>
             </div>
         </ng-template>
     </div>
 
     <!-- Create Actor Form -->
     <div class="text-center">
-        <button class="btn" (click)="showCreateActorForm()">Add Actor</button>
+        <button class="btn" (click)="showCreateActorForm()">Aggiungi Attore</button>
     </div>
 
     <div *ngIf="newActor()" class="admin-form">
-        <h3>Create Actor</h3>
+        <h3>Crea Attore</h3>
         <form (ngSubmit)="createActor()">
             <div class="form-group">
-                <label>Name:</label>
+                <label>Nome:</label>
                 <input type="text" [(ngModel)]="newActor().firstName" name="name" required />
             </div>
             <div class="form-group">
-                <label>Surname:</label>
+                <label>Cognome:</label>
                 <input type="text" [(ngModel)]="newActor().lastName" name="surname" required />
             </div>
-            <div class="form-group">
-                <label>Birthdate:</label>
-                <input type="date" [(ngModel)]="newActor().birthdate" name="birthdate" />
-            </div>
+
             <div class="form-actions">
-                <button type="submit" class="btn">Create</button>
-                <button type="button" class="btn btn-cancel" (click)="cancelCreate()">Cancel</button>
+                <button type="submit" class="btn">Crea</button>
+                <button type="button" class="btn btn-cancel" (click)="cancelCreate()">Annulla</button>
             </div>
         </form>
     </div>
 
     <!-- Edit Actor Form -->
     <div *ngIf="editingActor()" class="admin-form">
-        <h3>Edit Actor</h3>
+        <h3>Modifica Attore</h3>
         <form (ngSubmit)="updateActor()">
             <div class="form-group">
-                <label>Name:</label>
+                <label>Nome:</label>
                 <input type="text" [(ngModel)]="editingActor()!.firstName" name="editName" required />
             </div>
             <div class="form-group">
-                <label>Surname:</label>
+                <label>Cognome:</label>
                 <input type="text" [(ngModel)]="editingActor()!.lastName" name="editSurname" required />
             </div>
-            <div class="form-group">
-                <label>Birthdate:</label>
-                <input type="date" [(ngModel)]="editingActor()!.birthdate" name="editBirthdate" />
-            </div>
+
             <div class="form-actions">
-                <button type="submit" class="btn">Update</button>
-                <button type="button" class="btn btn-cancel" (click)="cancelEdit()">Cancel</button>
+                <button type="submit" class="btn">Aggiorna</button>
+                <button type="button" class="btn btn-cancel" (click)="cancelEdit()">Annulla</button>
             </div>
         </form>
     </div>

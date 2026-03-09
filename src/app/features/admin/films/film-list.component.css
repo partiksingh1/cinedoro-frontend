@@ -106,7 +106,7 @@
 .poster {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: fit-content;
   overflow: hidden;
   background: #eee;
 }

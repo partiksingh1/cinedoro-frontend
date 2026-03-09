@@ -1,15 +1,15 @@
 <div class="auth-container">
   <section class="card">
-    <h2>Register</h2>
+    <h2>Registrati</h2>
 
     <form #f="ngForm" (ngSubmit)="submit(f)">
       <div class="form-group">
-        <label>First Name</label>
+        <label>Nome</label>
         <input name="firstName" [(ngModel)]="firstName" required minlength="2" />
       </div>
 
       <div class="form-group">
-        <label>Last Name</label>
+        <label>Cognome</label>
         <input name="lastName" [(ngModel)]="lastName" required minlength="2" />
       </div>
 
@@ -24,20 +24,20 @@
       </div>
 
       <div class="form-group">
-        <label>Confirm Password</label>
+        <label>Conferma Password</label>
         <input name="confirmPassword" type="password" [(ngModel)]="confirmPassword" required />
-        <small class="password-mismatch" *ngIf="confirmPassword && password !== confirmPassword">Passwords do not
-          match</small>
+        <small class="password-mismatch" *ngIf="confirmPassword && password !== confirmPassword">Le password non
+          corrispondono</small>
       </div>
 
       <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
 
       <button type="submit" [disabled]="isSubmitting">
-        {{ isSubmitting ? 'Registering...' : 'Create Account' }}
+        {{ isSubmitting ? 'Registrazione in corso...' : 'Crea Account' }}
       </button>
 
       <p class="muted">
-        Already have an account? <a routerLink="/login">Login</a>
+        Hai già un account? <a routerLink="/login">Accedi</a>
       </p>
     </form>
   </section>

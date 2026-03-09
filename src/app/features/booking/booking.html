@@ -1,11 +1,10 @@
 <div *ngIf="bookingData$ | async as data" class="booking-page">
 
     <!-- Back Button -->
-    <button class="back-btn" routerLink="/screenings">
-        ← Back
-    </button>
 
-    <div class="layout">
+    <button class="back-btn" (click)="goBack()"> ← Indietro</button>
+
+    <div class=" layout">
 
         <!-- LEFT SIDE -->
         <div class="left-section">
@@ -24,7 +23,7 @@
                 <!-- SCREEN -->
                 <div class="screen-wrapper">
                     <div class="screen"></div>
-                    <p class="screen-text">SCREEN</p>
+                    <p class="screen-text">SCHERMO</p>
                 </div>
 
                 <!-- SEATS -->
@@ -32,7 +31,7 @@
 
                     <div *ngFor="let row of getSeatsByRow(data.seats) | keyvalue" class="seat-row">
 
-                        <span class="row-label">Row {{ row.key }}</span>
+                        <span class="row-label">Fila {{ row.key }}</span>
 
                         <div class="seats">
 
@@ -55,17 +54,17 @@
 
                     <div class="legend-item">
                         <span class="seat-demo available"></span>
-                        Available
+                        Disponibile
                     </div>
 
                     <div class="legend-item">
                         <span class="seat-demo selected"></span>
-                        Selected
+                        Selezionato
                     </div>
 
                     <div class="legend-item">
                         <span class="seat-demo occupied"></span>
-                        Occupied
+                        Occupato
                     </div>
 
                 </div>
@@ -76,7 +75,7 @@
             <!-- SERVICES -->
             <div class="card">
 
-                <h3 class="section-title">Extra Services</h3>
+                <h3 class="section-title">Servizi Extra</h3>
 
                 <div *ngFor="let service of data.services" class="service-item">
 
@@ -110,7 +109,7 @@
         <!-- RIGHT SIDE SUMMARY -->
         <div class="summary-card">
 
-            <h3>Booking Summary</h3>
+            <h3>Riepilogo Prenotazione</h3>
 
             <div class="summary-section">
 
@@ -121,7 +120,7 @@
 
             <div class="summary-section">
 
-                <p class="label">Date & Time</p>
+                <p class="label">Data e Ora</p>
                 <p>
                     {{ data.screening.screeningDate }}
                     {{ data.screening.screeningTime }}
@@ -131,20 +130,20 @@
 
             <div class="summary-section">
 
-                <p class="label">Seats ({{ selectedSeats.length }})</p>
+                <p class="label">Posti ({{ selectedSeats.length }})</p>
 
                 <div *ngIf="selectedSeats.length > 0" class="seat-badges">
 
                     <span *ngFor="let seatId of selectedSeats" class="badge">
 
-                        Seat {{ seatId }}
+                        Posto {{ seatId }}
 
                     </span>
 
                 </div>
 
                 <p *ngIf="selectedSeats.length === 0" class="muted">
-                    No seats selected
+                    Nessun posto selezionato
                 </p>
 
             </div>
@@ -153,7 +152,7 @@
             <div class="summary-section">
 
                 <p>
-                    Tickets ({{ selectedSeats.length }})
+                    Biglietti ({{ selectedSeats.length }})
                 </p>
 
                 <p>
@@ -164,7 +163,7 @@
 
             <div class="summary-total">
 
-                <span>Total</span>
+                <span>Totale</span>
                 <span>{{ calculateTotal(data) | currency }}</span>
 
             </div>
@@ -173,7 +172,7 @@
             <button class="confirm-btn" (click)="handleBooking(data)"
                 [disabled]="selectedSeats.length === 0 || bookingInProgress">
 
-                {{ bookingInProgress ? 'Processing...' : 'Confirm Booking' }}
+                {{ bookingInProgress ? 'In elaborazione...' : 'Conferma Prenotazione' }}
 
             </button>
 
@@ -185,5 +184,5 @@
 
 
 <div *ngIf="!(bookingData$ | async)" class="loading">
-    Loading booking information...
+    Caricamento informazioni sulla prenotazione...
 </div>

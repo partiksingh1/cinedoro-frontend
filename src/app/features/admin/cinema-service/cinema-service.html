@@ -1,20 +1,20 @@
 <div class="admin-container">
     <div class="header">
-        <h1 class="title">Manage Cinema Services</h1>
+        <h1 class="title">Gestisci Servizi Cinema</h1>
     </div>
 
     <!-- Loading -->
-    <div *ngIf="loading()" class="loading">Loading services...</div>
+    <div *ngIf="loading()" class="loading">Caricamento servizi...</div>
 
     <!-- Services Table -->
     <div *ngIf="!loading() && cinemaServices().length > 0">
         <table class="admin-table">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Price ($)</th>
-                    <th>Actions</th>
+                    <th>Nome</th>
+                    <th>Descrizione</th>
+                    <th>Prezzo (€)</th>
+                    <th>Azioni</th>
                 </tr>
             </thead>
             <tbody>
@@ -23,8 +23,8 @@
                     <td>{{ service.description }}</td>
                     <td>{{ service.price | number:'1.2-2' }}</td>
                     <td>
-                        <button class="btn btn-edit" (click)="showEditServiceForm(service)">Edit</button>
-                        <button class="btn btn-delete" (click)="deleteService(service.id!)">Delete</button>
+                        <button class="btn btn-edit" (click)="showEditServiceForm(service)">Modifica</button>
+                        <button class="btn btn-delete" (click)="deleteService(service.id!)">Elimina</button>
                     </td>
                 </tr>
             </tbody>
@@ -32,58 +32,58 @@
     </div>
 
     <div *ngIf="!loading() && cinemaServices().length === 0" class="no-data">
-        <p>No services found.</p>
+        <p>Nessun servizio trovato.</p>
     </div>
 
     <!-- Create Button -->
     <div class="text-center" *ngIf="!newService()">
-        <button class="btn" (click)="showCreateServiceForm()">Add New Service</button>
+        <button class="btn" (click)="showCreateServiceForm()">Aggiungi Nuovo Servizio</button>
     </div>
 
     <!-- Create Form -->
     <div *ngIf="newService()" class="admin-form">
-        <h3>Create New Service</h3>
+        <h3>Crea Nuovo Servizio</h3>
         <form (ngSubmit)="createService()">
             <div class="form-group">
-                <label>Name:</label>
+                <label>Nome:</label>
                 <input type="text" [(ngModel)]="newService().name" name="name" required />
             </div>
             <div class="form-group">
-                <label>Description:</label>
+                <label>Descrizione:</label>
                 <textarea [(ngModel)]="newService().description" name="description" required></textarea>
             </div>
             <div class="form-group">
-                <label>Price:</label>
+                <label>Prezzo:</label>
                 <input type="number" [(ngModel)]="newService().price" name="price" min="0" step="0.01" required />
             </div>
             <div class="form-actions">
-                <button type="submit" class="btn">Create</button>
-                <button type="button" class="btn btn-cancel" (click)="cancelCreate()">Cancel</button>
+                <button type="submit" class="btn">Crea</button>
+                <button type="button" class="btn btn-cancel" (click)="cancelCreate()">Annulla</button>
             </div>
         </form>
     </div>
 
     <!-- Edit Form -->
     <div *ngIf="editService()" class="admin-form">
-        <h3>Edit Service</h3>
+        <h3>Modifica Servizio</h3>
         <form (ngSubmit)="updateService()">
             <div class="form-group">
-                <label>Name:</label>
+                <label>Nome:</label>
                 <input type="text" [value]="editService()?.name" (input)="onEditInputChange($event, 'name')" required />
             </div>
             <div class="form-group">
-                <label>Description:</label>
+                <label>Descrizione:</label>
                 <textarea [value]="editService()?.description" (input)="onEditInputChange($event, 'description')"
                     required></textarea>
             </div>
             <div class="form-group">
-                <label>Price:</label>
+                <label>Prezzo:</label>
                 <input type="number" [value]="editService()?.price" (input)="onEditInputChange($event, 'price')" min="0"
                     step="0.01" required />
             </div>
             <div class="form-actions">
-                <button type="submit" class="btn">Update</button>
-                <button type="button" class="btn btn-cancel" (click)="cancelEdit()">Cancel</button>
+                <button type="submit" class="btn">Aggiorna</button>
+                <button type="button" class="btn btn-cancel" (click)="cancelEdit()">Annulla</button>
             </div>
         </form>
     </div>

@@ -1,10 +1,10 @@
 <div class="admin-container">
     <div class="header">
-        <h1 class="title">Manage Films</h1>
+        <h1 class="title">Gestisci Film</h1>
         <div class="actions">
-            <input type="text" class="search-input" placeholder="Search movies..." [(ngModel)]="searchQuery">
-            <button class="btn" (click)="searchFilms()">Search</button>
-            <button class="btn" routerLink="/admin/films/create">Create Movie</button>
+            <input type="text" class="search-input" placeholder="Cerca film..." [(ngModel)]="searchQuery">
+            <button class="btn" (click)="searchFilms()">Cerca</button>
+            <button class="btn" routerLink="/admin/films/create">Crea Film</button>
         </div>
     </div>
 
@@ -22,12 +22,12 @@
                 <h3 class="film-title">{{ film.title }}</h3>
                 <p class="film-description">{{ film.description }}</p>
                 <div class="film-meta">
-                    <span>Duration: {{ film.durationMinutes }} min</span>
+                    <span>Durata: {{ film.durationMinutes }} min</span>
                 </div>
                 <div class="card-actions">
-                    <button class="btn btn-secondary" [routerLink]="['/screenings/film', film.id]">Screenings</button>
-                    <button class="btn btn-edit" [routerLink]="['/admin/films/edit', film.id]">Edit</button>
-                    <button class="btn btn-delete" (click)="deleteFilm(film.id!)">Delete</button>
+                    <button class="btn btn-secondary" [routerLink]="['/screenings/film', film.id]">Proiezioni</button>
+                    <button class="btn btn-edit" [routerLink]="['/admin/films/edit', film.id]">Modifica</button>
+                    <button class="btn btn-delete" (click)="deleteFilm(film.id!)">Elimina</button>
                 </div>
             </div>
         </div>
@@ -35,6 +35,6 @@
 
     <!-- No films found -->
     <div *ngIf="(films$ | async)?.length === 0" class="no-data">
-        No films found.
+        Nessun film trovato.
     </div>
 </div>

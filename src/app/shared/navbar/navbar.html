@@ -10,25 +10,25 @@
                 <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
             </li>
             <li>
-                <a routerLink="/films" routerLinkActive="active">Films</a>
+                <a routerLink="/films" routerLinkActive="active">Film</a>
             </li>
             <li>
-                <a routerLink="/my-bookings" routerLinkActive="active">My Bookings</a>
+                <a routerLink="/my-bookings" routerLinkActive="active">Le mie prenotazioni</a>
             </li>
             <li *ngIf="isAdmin()">
-                <a routerLink="/admin" routerLinkActive="active">Admin</a>
+                <a routerLink="/admin" routerLinkActive="active">Amministrazione</a>
             </li>
         </ul>
 
         <div class="nav-right">
             <ng-container *ngIf="!authService.isLoggedIn(); else loggedIn">
-                <a routerLink="/login" class="btn btn-secondary">Login</a>
-                <a routerLink="/register" class="btn">Register</a>
+                <a routerLink="/login" class="btn btn-secondary">Accesso</a>
+                <a routerLink="/register" class="btn">Registrati</a>
             </ng-container>
 
             <ng-template #loggedIn>
-                <span class="user-name">Welcome, {{ userName() }}</span>
-                <button (click)="logout()" class="btn btn-logout">Logout</button>
+                <span class="user-name">Benvenuto, {{ userName() }}</span>
+                <button (click)="logout()" class="btn btn-logout">Esci</button>
             </ng-template>
         </div>
 

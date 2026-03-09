@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Observable, combineLatest, map, switchMap, tap } from 'rxjs';
 import { Screening } from '../../models/screening';
 import { Film } from '../../models/film';
@@ -45,7 +45,8 @@ export class BookingComponent {
     private cinemaServiceService: CinemaServiceService,
     private bookingService: BookingService,
     private ticketService: TicketService,
-    private userService: UserService
+    private userService: UserService,
+    private location: Location
   ) {
 
     const screeningId = Number(this.route.snapshot.paramMap.get('screeningId'));
@@ -284,6 +285,9 @@ export class BookingComponent {
     }
 
     return null;
+  }
+  goBack() {
+    this.location.back();
   }
 
   getSeatsByRow(seats: Seat[]): { [row: number]: Seat[] } {

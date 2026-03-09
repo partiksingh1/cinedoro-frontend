@@ -4,9 +4,9 @@
     <div class="header">
 
         <div class="search-bar">
-            <input type="text" placeholder="Search movies..." [(ngModel)]="searchQuery" />
+            <input type="text" placeholder="Cerca film..." [(ngModel)]="searchQuery" />
 
-            <button (click)="searchFilms()">Search</button>
+            <button (click)="searchFilms()">Cerca</button>
         </div>
 
     </div>
@@ -36,7 +36,7 @@
                 </div>
                 <!-- 
                 <div class="film-director">
-                    Directed by {{ film.director.firstName }} {{ film.director.lastName }}
+                    Regia di {{ film.director.firstName }} {{ film.director.lastName }}
                 </div> -->
 
                 <!-- Genres -->
@@ -52,7 +52,7 @@
                 </div> -->
 
                 <button class="primary-btn" [routerLink]="['/screenings/film', film.id]">
-                    View All Screenings
+                    Vedi tutte le proiezioni
                 </button>
             </div>
         </div>
