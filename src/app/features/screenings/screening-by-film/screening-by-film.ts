@@ -5,7 +5,7 @@ import { Film } from '../../../models/film';
 import { Screening } from '../../../models/screening';
 import { CommonModule } from '@angular/common';
 import { Observable, of } from 'rxjs';
-import { switchMap, tap, map } from 'rxjs/operators';
+import { switchMap, map, startWith, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-screening-by-film',
@@ -15,36 +15,35 @@ import { switchMap, tap, map } from 'rxjs/operators';
   styleUrls: ['./screening-by-film.css']
 })
 export class ScreeningByFilmComponent {
-
-  film: Film | null = null;
-  screenings: Screening[] = [];
-  loading = true;
+  // Observable of the current film
+  film$: Observable<Film | null>;
+  loading: any;
+  screenings: any;
+  film: any;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private filmService: FilmService
   ) {
-    this.route.paramMap.pipe(
+    this.film$ = this.route.paramMap.pipe(
       map(params => Number(params.get('filmId'))),
-      switchMap(filmId => this.filmService.getFilmById(filmId)),
-      tap(() => this.loading = false)
-    ).subscribe({
-      next: (film) => {
-        this.film = film;
-        this.screenings = film.screenings || [];
-      },
-      error: (err) => {
-        console.error('Failed to load film', err);
-        this.loading = false;
-      }
-    });
+      switchMap(filmId =>
+        this.filmService.getFilmById(filmId).pipe(
+          catchError(err => {
+            console.error('Failed to load film', err);
+            return of(null); // fallback to null if error occurs
+          }),
+          startWith(null) // emit null immediately for loading state
+        )
+      )
+    );
   }
 
   // Group screenings by date
-  getGroupedScreenings(): { [date: string]: Screening[] } {
+  getGroupedScreenings(screenings: Screening[]): { [date: string]: Screening[] } {
     const grouped: { [key: string]: Screening[] } = {};
-    this.screenings.forEach(s => {
+    screenings.forEach(s => {
       if (!grouped[s.screeningDate]) {
         grouped[s.screeningDate] = [];
       }
@@ -66,5 +65,4 @@ export class ScreeningByFilmComponent {
   goBack() {
     this.router.navigate(['/films']);
   }
-
 }
