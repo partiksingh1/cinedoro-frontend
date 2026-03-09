@@ -12,15 +12,3 @@ body {
   background-size: cover;
   color: #f8f8f8;
 }
-
-/* Optional: overlay for better contrast */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* dark overlay */
-  z-index: -1;
-}
