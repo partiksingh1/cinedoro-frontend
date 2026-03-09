@@ -1,104 +1,118 @@
-/* Page Background */
-
-body {
-  margin: 0;
-  font-family: 'Inter', 'Segoe UI', sans-serif;
-  background: #faf7f2;
+/* Logo Header */
+.logo-header img {
+  height: 80px;
+  width: auto;
+  display: block;
+  margin: 0 auto;
 }
 
 /* Container */
-
 .wizard-container {
-  max-width: 1200px;
+  max-width: 1300px;
   margin: auto;
   padding: 40px 20px;
 }
 
 /* Header */
-
 .header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .title {
-  font-size: 42px;
-  font-weight: 700;
-  color: #7f1d1d;
-  letter-spacing: 1px;
+  font-size: 44px;
+  font-weight: 800;
+  color: #ffd700; /* Golden title for dark bg */
+  letter-spacing: 2px;
+}
+
+/* Header Buttons */
+.header-buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.top-actions {
+  display: flex;
+  gap: 15px;
 }
 
 /* Buttons */
-
 button {
-  margin: 10px 8px;
   padding: 10px 18px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
   font-weight: 500;
-  background: #7f1d1d;
+  background: #7f1d1d; /* Red accent */
   color: white;
   transition: all 0.2s ease;
 }
 
 button:hover {
-  background: #450a0a;
+  background: #ff4500; /* Brighter hover for dark bg */
   transform: translateY(-1px);
 }
 
 /* Film Grid */
-
 .films-grid {
   margin-top: 40px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 28px;
 }
 
 /* Film Card */
-
 .film-card {
-  background: white;
+  background: #1f1f1f; /* Dark card background */
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid #eee;
+  border: 1px solid #333;
+  display: flex;
+  flex-direction: column;
   transition: all 0.25s ease;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7);
 }
 
 .film-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.9);
 }
 
 /* Poster */
-
 .poster {
   position: relative;
   width: 100%;
-  aspect-ratio: 2 / 3; /* classic movie poster ratio */
+  aspect-ratio: 2 / 3;
   overflow: hidden;
-  background: #eee;
+  background: #333; /* Dark placeholder background */
 }
 
 .poster img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+  transition: transform 0.4s ease;
 }
 
+.film-card:hover .poster img {
+  transform: scale(1.05);
+}
+
+/* Poster Placeholder */
 .poster-placeholder {
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 60px;
-  background: #eee;
+  background: #333;
+  color: #ffd700; /* Golden emoji placeholder */
 }
 
 /* Age Badge */
-
 .age-badge {
   position: absolute;
   top: 10px;
@@ -111,57 +125,57 @@ button:hover {
 }
 
 /* Content */
-
 .film-content {
   padding: 18px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 /* Title */
-
 .film-title {
   margin: 0 0 6px;
   font-size: 18px;
   font-weight: 600;
-  color: #7f1d1d;
+  color: #ffd700; /* Golden text */
+  text-align: center;
 }
 
 /* Description */
-
 .film-description {
   font-size: 14px;
-  color: #555;
+  color: #ccc;
   margin-bottom: 12px;
   line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-align: center;
 }
 
 /* Meta */
-
 .film-meta {
   display: flex;
   gap: 15px;
   font-size: 13px;
-  color: #777;
-  margin-bottom: 8px;
-}
-
-/* Director */
-
-.film-director {
-  font-size: 13px;
-  color: #666;
+  color: #aaa;
   margin-bottom: 10px;
+  justify-content: center;
 }
 
 /* Genres */
-
 .genres {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .genre-badge {
   display: inline-block;
-  background: #f5efe0;
-  color: #7f1d1d;
+  background: #333;
+  color: #ffd700;
   padding: 4px 8px;
   border-radius: 6px;
   font-size: 12px;
@@ -169,32 +183,7 @@ button:hover {
   margin-bottom: 4px;
 }
 
-/* Screenings */
-
-.screenings {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 12px;
-}
-
-.screening-chip {
-  padding: 4px 8px;
-  background: #fff7ed;
-  border: 1px solid #e7d3a6;
-  border-radius: 6px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.screening-chip:hover {
-  background: #d4af37;
-  color: white;
-}
-
 /* Primary Button */
-
 .primary-btn {
   width: 100%;
   padding: 10px;
@@ -202,8 +191,12 @@ button:hover {
   color: white;
   border-radius: 6px;
   font-weight: 500;
+  margin-top: auto;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
 }
 
 .primary-btn:hover {
-  background: #450a0a;
+  background: #ff4500;
 }
