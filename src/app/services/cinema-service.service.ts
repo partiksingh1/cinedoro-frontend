@@ -15,12 +15,12 @@ export class CinemaServiceService {
 
     constructor(private http: HttpClient) { }
 
-    getAllServices(): Observable<CinemaService[]> {
-        return this.http.get<CinemaService[]>(this.baseUrl);
+    getAllServices(): Observable<any[]> {
+        return this.http.get<any[]>(this.baseUrl);
     }
 
     createService(service: Partial<CinemaService>): Observable<CinemaService> {
-        return this.http.post<CinemaService>(this.baseUrl, service);
+        return this.http.post<any>(this.baseUrl, service);
     }
 
     updateService(id: number, service: Partial<CinemaService>): Observable<CinemaService> {

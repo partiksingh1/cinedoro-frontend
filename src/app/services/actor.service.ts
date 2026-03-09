@@ -18,15 +18,15 @@ export class ActorService {
     constructor(private http: HttpClient) { }
 
     getAllActors(): Observable<Actor[]> {
-        return this.http.get<Actor[]>(this.apiUrl);
+        return this.http.get<any[]>(this.apiUrl);
     }
 
     getActorById(id: number): Observable<Actor> {
-        return this.http.get<Actor>(`${this.apiUrl}/${id}`);
+        return this.http.get<any>(`${this.apiUrl}/${id}`);
     }
 
     createActor(actor: Actor): Observable<Actor> {
-        return this.http.post<Actor>(this.apiUrl, actor);
+        return this.http.post<any>(this.apiUrl, actor);
     }
 
     updateActor(id: number, actor: Actor): Observable<void> {

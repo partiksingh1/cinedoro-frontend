@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { GenreService } from '../../../services/genre.service';
 import { Genre } from '../../../models/genre';
 import { CommonModule } from '@angular/common';
@@ -6,18 +6,19 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 @Component({
-    imports: [CommonModule, FormsModule, ReactiveFormsModule],
     selector: 'app-admin-genre',
+    standalone: true,
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule],
     templateUrl: './admin-genre.component.html',
     styleUrls: ['./admin-genre.component.css']
 })
 export class AdminGenreComponent implements OnInit {
 
-    genres: any = [];
+    // Reactive list of genres
+    genres = signal<any[]>([]);
 
-    newGenre: any = {
-        name: ''
-    };
+    // New genre form model
+    newGenre = signal<any>({ name: '' });
 
     constructor(private genreService: GenreService) { }
 
@@ -25,34 +26,35 @@ export class AdminGenreComponent implements OnInit {
         this.loadGenres();
     }
 
+    // Load all genres
     loadGenres() {
         this.genreService.getAllGenres().subscribe({
-            next: (data) => {
-                this.genres = data;
-            },
-            error: (err) => console.error(err)
+            next: (data) => this.genres.set(data),
+            error: (err) => console.error('Error fetching genres:', err)
         });
     }
 
+    // Create a new genre
     createGenre() {
-        if (!this.newGenre.name.trim()) return;
+        const genre = this.newGenre();
+        if (!genre.name.trim()) return;
 
-        this.genreService.createGenre(this.newGenre).subscribe({
+        this.genreService.createGenre(genre).subscribe({
             next: () => {
-                this.newGenre = { name: '' };
+                this.newGenre.set({ name: '' });
                 this.loadGenres();
             },
-            error: (err) => console.error(err)
+            error: (err) => console.error('Error creating genre:', err)
         });
     }
 
+    // Delete a genre
     deleteGenre(id?: number) {
         if (!id) return;
 
         this.genreService.deleteGenre(id).subscribe({
             next: () => this.loadGenres(),
-            error: (err) => console.error(err)
+            error: (err) => console.error('Error deleting genre:', err)
         });
     }
-
 }

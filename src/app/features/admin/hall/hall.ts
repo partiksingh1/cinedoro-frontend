@@ -1,110 +1,101 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Hall, CreateHallRequest } from '../../../../app/models/hall';
+import { Component, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { HallService } from '../../../../app/services/hall.service';
-import { HttpClientModule } from '@angular/common/http';
+import { Hall, CreateHallRequest } from '../../../../app/models/hall';
 
 @Component({
   selector: 'app-hall',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './hall.html',
-  styleUrl: './hall.css',
+  styleUrls: ['./hall.css'],
 })
-export class hall implements OnInit {
-  halls: Hall[] = [];
-  newHall: CreateHallRequest = { name: '', capacity: 0 };
-  editHall: Hall | null = null;
-  editingHallId: number | null = null;
-  showCreateForm: boolean = false;
-  showEditForm: boolean = false;
-  loading: boolean = true;
+export class HallComponent implements OnInit {
+  // Reactive list of halls
+  halls = signal<any[]>([]);
+
+  // New hall form model
+  newHall = signal<CreateHallRequest>({ name: '', capacity: 0 });
+
+  // Editing hall signal
+  editingHall = signal<Hall | null>(null);
+
+  // Show create form toggle
+  showCreateForm = signal(false);
 
   constructor(private hallService: HallService) { }
 
   ngOnInit(): void {
-    this.getAllHalls();
+    this.loadHalls();
   }
 
-  getAllHalls(): void {
+  // Load halls from API
+  loadHalls() {
     this.hallService.getAllHalls().subscribe({
-      next: (data) => {
-        this.halls = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error fetching halls', err);
-        this.loading = false;
-      },
+      next: (data) => this.halls.set(data),
+      error: (err) => console.error('Error fetching halls:', err),
     });
   }
 
-  showCreateHallForm(): void {
-    this.showCreateForm = true;
-    this.newHall = { name: '', capacity: 0 }; // Reset form
+  // ---------------- CREATE ----------------
+  showCreateHallForm() {
+    this.showCreateForm.set(true);
+    this.newHall.set({ name: '', capacity: 0 });
   }
 
-  cancelCreate(): void {
-    this.showCreateForm = false;
+  cancelCreate() {
+    this.showCreateForm.set(false);
   }
 
-  createHall(): void {
-    if (this.newHall.name && this.newHall.capacity > 0) {
-      this.hallService.createHall(this.newHall).subscribe({
-        next: (hall) => {
-          console.log('Hall created', hall);
-          this.getAllHalls();
-          this.cancelCreate();
-        },
-        error: (err) => console.error('Error creating hall', err),
-      });
+  createHall() {
+    const hall = this.newHall();
+    if (!hall.name || hall.capacity <= 0) {
+      alert('Please enter a valid name and capacity greater than 0');
+      return;
     }
-  }
 
-  showEditHallForm(hall: Hall): void {
-    this.editHall = { ...hall }; // Create a copy for editing
-    this.editingHallId = hall.id!;
-    this.showEditForm = true;
-  }
-
-  cancelEdit(): void {
-    this.showEditForm = false;
-    this.editHall = null;
-    this.editingHallId = null;
-  }
-
-  onEditInputChange(event: Event, field: 'name' | 'capacity'): void {
-    if (this.editHall) {
-      const value = (event.target as HTMLInputElement).value;
-      if (field === 'capacity') {
-        this.editHall.capacity = parseInt(value, 10);
-      } else {
-        this.editHall.name = value;
-      }
-    }
-  }
-
-  updateHall(): void {
-    if (this.editHall && this.editHall.id) {
-      this.hallService.updateHall(this.editHall.id, this.editHall).subscribe({
-        next: (hall) => {
-          console.log('Hall updated', hall);
-          this.getAllHalls();
-          this.cancelEdit();
-        },
-        error: (err) => console.error('Error updating hall', err),
-      });
-    }
-  }
-
-  deleteHall(id: number): void {
-    this.hallService.deleteHall(id).subscribe({
+    this.hallService.createHall(hall).subscribe({
       next: () => {
-        console.log('Hall deleted', id);
-        this.getAllHalls();
+        this.loadHalls();
+        this.cancelCreate();
       },
-      error: (err) => console.error('Error deleting hall', err),
+      error: (err) => console.error('Error creating hall:', err),
+    });
+  }
+
+  // ---------------- EDIT ----------------
+  startEditing(hall: Hall) {
+    this.editingHall.set({ ...hall });
+  }
+
+  cancelEdit() {
+    this.editingHall.set(null);
+  }
+
+  updateHall() {
+    const hall = this.editingHall();
+    if (!hall || !hall.id || !hall.name || hall.capacity <= 0) {
+      alert('Please enter a valid name and capacity greater than 0');
+      return;
+    }
+
+    this.hallService.updateHall(hall.id, hall).subscribe({
+      next: () => {
+        this.loadHalls();
+        this.cancelEdit();
+      },
+      error: (err) => console.error('Error updating hall:', err),
+    });
+  }
+
+  // ---------------- DELETE ----------------
+  deleteHall(id: number) {
+    if (!confirm('Are you sure you want to delete this hall?')) return;
+
+    this.hallService.deleteHall(id).subscribe({
+      next: () => this.loadHalls(),
+      error: (err) => console.error('Error deleting hall:', err),
     });
   }
 }

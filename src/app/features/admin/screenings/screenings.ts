@@ -1,12 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Screening } from '../../../../app/models/screening';
-import { Film } from '../../../../app/models/film'; // New import
-import { Hall } from '../../../../app/models/hall'; // New import
 import { ScreeningService } from '../../../../app/services/screening.service';
-import { FilmService } from '../../../../app/services/film.service'; // New import
-import { HallService } from '../../../../app/services/hall.service'; // New import
+import { FilmService } from '../../../../app/services/film.service';
+import { HallService } from '../../../../app/services/hall.service';
 import { HttpClientModule } from '@angular/common/http';
 
 @Component({
@@ -17,113 +14,119 @@ import { HttpClientModule } from '@angular/common/http';
   styleUrl: './screenings.css',
 })
 export class Screenings implements OnInit {
-  screenings: Screening[] = [];
-  films: Film[] = []; // New property
-  halls: Hall[] = []; // New property
-  newScreening: Partial<Screening> = { filmId: 0, hallId: 0, screeningDate: '', screeningTime: '', basePrice: 0 }; // Updated type
-  editScreening: Partial<Screening> | null = null; // Updated type
-  editingScreeningId: number | null = null;
-  showCreateForm: boolean = false;
-  showEditForm: boolean = false;
-  loading: boolean = true;
+  // Signals for reactive state using any
+  screenings: WritableSignal<any[]> = signal([]);
+  films: WritableSignal<any[]> = signal([]);
+  halls: WritableSignal<any[]> = signal([]);
+  loading: WritableSignal<any> = signal(true);
+  showCreateForm: WritableSignal<any> = signal(false);
+  showEditForm: WritableSignal<any> = signal(false);
+
+  newScreening: WritableSignal<any> = signal({
+    filmId: 0,
+    hallId: 0,
+    screeningDate: '',
+    screeningTime: '',
+    basePrice: 0,
+  });
+
+  editScreening: WritableSignal<any | null> = signal(null);
+  editingScreeningId: WritableSignal<any | null> = signal(null);
 
   constructor(
     private screeningService: ScreeningService,
-    private filmService: FilmService, // New injection
-    private hallService: HallService // New injection
+    private filmService: FilmService,
+    private hallService: HallService
   ) { }
 
   ngOnInit(): void {
     this.getAllScreenings();
-    this.loadFilms(); // New call
-    this.loadHalls(); // New call
+    this.loadFilms();
+    this.loadHalls();
   }
 
   getAllScreenings(): void {
+    this.loading.set(true);
     this.screeningService.getAllScreenings().subscribe({
-      next: (data) => {
-        this.screenings = data;
-        this.loading = false;
+      next: (data: any) => {
+        this.screenings.set(data);
+        this.loading.set(false);
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error fetching screenings', err);
-        this.loading = false;
+        this.loading.set(false);
       },
     });
   }
 
   loadFilms(): void {
     this.filmService.getAllFilms().subscribe({
-      next: (data) => {
-        this.films = data;
-      },
-      error: (err) => console.error('Error fetching films', err),
+      next: (data: any) => this.films.set(data),
+      error: (err: any) => console.error('Error fetching films', err),
     });
   }
 
   loadHalls(): void {
     this.hallService.getAllHalls().subscribe({
-      next: (data) => {
-        this.halls = data;
-      },
-      error: (err) => console.error('Error fetching halls', err),
+      next: (data: any) => this.halls.set(data),
+      error: (err: any) => console.error('Error fetching halls', err),
     });
   }
 
   showCreateScreeningForm(): void {
-    this.showCreateForm = true;
-    this.newScreening = { filmId: 0, hallId: 0, screeningDate: '', screeningTime: '', basePrice: 0 }; // Updated initialization
+    this.showCreateForm.set(true);
+    this.newScreening.set({ filmId: 0, hallId: 0, screeningDate: '', screeningTime: '', basePrice: 0 });
   }
 
   cancelCreate(): void {
-    this.showCreateForm = false;
+    this.showCreateForm.set(false);
   }
 
   createScreening(): void {
-    if (this.newScreening.filmId && this.newScreening.hallId && this.newScreening.screeningDate && this.newScreening.screeningTime && this.newScreening.basePrice !== undefined) {
-      this.screeningService.createScreening(this.newScreening as Screening).subscribe({
-        next: (screening) => {
-          console.log('Screening created', screening);
+    const screening = this.newScreening();
+    if (screening.filmId && screening.hallId && screening.screeningDate && screening.screeningTime && screening.basePrice !== undefined) {
+      this.screeningService.createScreening(screening).subscribe({
+        next: () => {
           this.getAllScreenings();
           this.cancelCreate();
         },
-        error: (err) => console.error('Error creating screening', err),
+        error: (err: any) => console.error('Error creating screening', err),
       });
     }
   }
 
-  showEditScreeningForm(screening: Screening): void {
-    this.editScreening = { ...screening }; // Create a copy for editing
-    this.editingScreeningId = screening.id!;
-    this.showEditForm = true;
+  showEditScreeningForm(screening: any): void {
+    this.editScreening.set({ ...screening });
+    this.editingScreeningId.set(screening.id);
+    this.showEditForm.set(true);
   }
 
   cancelEdit(): void {
-    this.showEditForm = false;
-    this.editScreening = null;
-    this.editingScreeningId = null;
+    this.showEditForm.set(false);
+    this.editScreening.set(null);
+    this.editingScreeningId.set(null);
   }
 
   updateScreening(): void {
-    if (this.editScreening && this.editScreening.id) {
-      this.screeningService.updateScreening(this.editScreening.id, this.editScreening as Screening).subscribe({
-        next: (screening) => {
-          console.log('Screening updated', screening);
+    const editing = this.editScreening();
+    if (editing && editing.id) {
+      this.screeningService.updateScreening(editing.id, editing).subscribe({
+        next: () => {
           this.getAllScreenings();
           this.cancelEdit();
         },
-        error: (err) => console.error('Error updating screening', err),
+        error: (err: any) => console.error('Error updating screening', err),
       });
     }
   }
 
-  deleteScreening(id: number): void {
+  deleteScreening(id: any): void {
     this.screeningService.deleteScreening(id).subscribe({
-      next: () => {
-        console.log('Screening deleted', id);
-        this.getAllScreenings();
-      },
-      error: (err) => console.error('Error deleting screening', err),
+      next: () => this.getAllScreenings(),
+      error: (err: any) => console.error('Error deleting screening', err),
     });
   }
+
+  // Computed signal: whether there are screenings
+  hasScreenings = computed(() => this.screenings().length > 0);
 }

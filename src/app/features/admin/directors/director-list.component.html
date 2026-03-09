@@ -1,117 +1,70 @@
-<h2>GESTIONE REGISTI</h2>
-
-<div class="forms-container">
-
-    <!-- FORM AGGIUNGI REGISTA -->
-    <div class="form-box">
-        <h3>Aggiungi Regista</h3>
-        <form (ngSubmit)="createDirector()">
-            <div>
-                <label>Nome</label>
-                <input type="text" name="firstName" [(ngModel)]="newDirector.firstName" required>
-            </div>
-            <div>
-                <label>Cognome</label>
-                <input type="text" name="lastName" [(ngModel)]="newDirector.lastName" required>
-            </div>
-            <button type="submit">AGGIUNGI</button>
-        </form>
+<div class="admin-container">
+    <div class="header">
+        <h1 class="title">Manage Directors</h1>
     </div>
 
-    <!-- FORM MODIFICA REGISTA -->
-    <div class="form-box" *ngIf="editingDirector()">
-        <h3>Modifica Regista</h3>
-        <form (ngSubmit)="updateDirector()">
-            <div>
-                <label>Nome</label>
-                <input type="text" [(ngModel)]="editingDirector()!.firstName" name="editFirstName" required>
-            </div>
-            <div>
-                <label>Cognome</label>
-                <input type="text" [(ngModel)]="editingDirector()!.lastName" name="editLastName" required>
-            </div>
-            <button type="submit">SALVA</button>
-            <button type="button" class="cancel" (click)="editingDirector.set(null)">ANNULLA</button>
-        </form>
+    <div class="forms-container">
+        <!-- Create Director Form -->
+        <div class="admin-form">
+            <h3>Add Director</h3>
+            <form (ngSubmit)="createDirector()">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" name="firstName" [(ngModel)]="newDirector.firstName" required>
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" name="lastName" [(ngModel)]="newDirector.lastName" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn">Add</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Edit Director Form -->
+        <div class="admin-form" *ngIf="editingDirector()">
+            <h3>Edit Director</h3>
+            <form (ngSubmit)="updateDirector()">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" [(ngModel)]="editingDirector()!.firstName" name="editFirstName" required>
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" [(ngModel)]="editingDirector()!.lastName" name="editLastName" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn">Save</button>
+                    <button type="button" class="btn btn-cancel" (click)="editingDirector.set(null)">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
 
+
+    <h3 class="sub-title">Existing Directors</h3>
+
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let director of directors()">
+                <td>{{ director.id }}</td>
+                <td>{{ director.firstName }}</td>
+                <td>{{ director.lastName }}</td>
+                <td>
+                    <button class="btn btn-edit" (click)="startEditing(director)">Edit</button>
+                    <button class="btn btn-delete" *ngIf="director.id"
+                        (click)="deleteDirector(director.id)">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>
-
-<hr>
-
-<h3>REGISTI PRESENTI</h3>
-
-<table border="1">
-
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>NOME</th>
-            <th>COGNOME</th>
-            <th>AZIONI</th>
-        </tr>
-    </thead>
-
-    <tbody>
-
-        <tr *ngFor="let director of directors()">
-
-            <td>{{ director.id }}</td>
-
-            <td>{{ director.firstName }}</td>
-
-            <td>{{ director.lastName }}</td>
-
-            <td>
-
-                <!-- <button [routerLink]="['/admin/director/edit', director.id]">Modifica</button> -->
-                <button class="edit" (click)="startEditing(director)">MODIFICA</button>
-
-                <button class="delete" *ngIf="director.id" (click)="deleteDirector(director.id)">ELIMINA</button>
-
-            </td>
-
-        </tr>
-
-    </tbody>
-
-</table>
-
-<!-- <div *ngIf="editingDirector()">
-
-  <h3>MODIFICA REGISTA</h3>
-
-  <form (ngSubmit)="updateDirector()">
-
-    <div>
-      <label>Nome</label>
-      <input
-        type="text"
-        [(ngModel)]="editingDirector()!.firstName"
-        name="editFirstName"
-        required
-      >
-    </div>
-
-    <div>
-      <label>Cognome</label>
-      <input
-        type="text"
-        [(ngModel)]="editingDirector()!.lastName"
-        name="editLastName"
-        required
-      >
-    </div>
-
-    <button type="submit">SALVA</button>
-
-    <button type="button" class="cancel" (click)="editingDirector.set(null)"> ANNULLA</button>
-
-  </form>
-
-</div> -->
-
-<!--  abbiamo una sezione aggiungi regista con nome e cognome, perché l'id è autogenerato, 
-  mentre sotto ho la lista di tutti i registi che ho nel db.--
-  successivamente voglio che accanto alla lista, compaia un bottone modifica, e un bottone elimina.
-  il bottone modifica deve portarmi in /director/edit/id    -->

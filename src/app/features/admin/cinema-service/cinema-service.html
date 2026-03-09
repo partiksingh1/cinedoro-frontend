@@ -1,12 +1,14 @@
-<div class="cinema-service-container">
-    <h2>Cinema Services</h2>
+<div class="admin-container">
+    <div class="header">
+        <h1 class="title">Manage Cinema Services</h1>
+    </div>
 
-    <!-- Loading Indicator -->
-    <div *ngIf="loading" class="loading">Loading services...</div>
+    <!-- Loading -->
+    <div *ngIf="loading()" class="loading">Loading services...</div>
 
-    <!-- Service List -->
-    <div *ngIf="!loading && cinemaServices.length > 0">
-        <table class="services-table">
+    <!-- Services Table -->
+    <div *ngIf="!loading() && cinemaServices().length > 0">
+        <table class="admin-table">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -16,70 +18,72 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let service of cinemaServices">
+                <tr *ngFor="let service of cinemaServices()">
                     <td>{{ service.name }}</td>
                     <td>{{ service.description }}</td>
                     <td>{{ service.price | number:'1.2-2' }}</td>
                     <td>
-                        <button class="btn edit-btn" (click)="showEditServiceForm(service)">Edit</button>
-                        <button class="btn delete-btn" (click)="deleteService(service.id!)">Delete</button>
+                        <button class="btn btn-edit" (click)="showEditServiceForm(service)">Edit</button>
+                        <button class="btn btn-delete" (click)="deleteService(service.id!)">Delete</button>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <div *ngIf="!loading && cinemaServices.length === 0">
+    <div *ngIf="!loading() && cinemaServices().length === 0" class="no-data">
         <p>No services found.</p>
     </div>
 
-    <!-- Create Service Button -->
-    <button class="btn create-btn" *ngIf="!showCreateForm" (click)="showCreateServiceForm()">Add New Service</button>
+    <!-- Create Button -->
+    <div class="text-center" *ngIf="!newService()">
+        <button class="btn" (click)="showCreateServiceForm()">Add New Service</button>
+    </div>
 
-    <!-- Create Service Form -->
-    <div *ngIf="showCreateForm" class="service-form">
+    <!-- Create Form -->
+    <div *ngIf="newService()" class="admin-form">
         <h3>Create New Service</h3>
         <form (ngSubmit)="createService()">
-            <label>
-                Name:
-                <input type="text" [(ngModel)]="newService.name" name="name" required />
-            </label>
-            <label>
-                Description:
-                <textarea [(ngModel)]="newService.description" name="description" required></textarea>
-            </label>
-            <label>
-                Price:
-                <input type="number" [(ngModel)]="newService.price" name="price" min="0" step="0.01" required />
-            </label>
+            <div class="form-group">
+                <label>Name:</label>
+                <input type="text" [(ngModel)]="newService().name" name="name" required />
+            </div>
+            <div class="form-group">
+                <label>Description:</label>
+                <textarea [(ngModel)]="newService().description" name="description" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Price:</label>
+                <input type="number" [(ngModel)]="newService().price" name="price" min="0" step="0.01" required />
+            </div>
             <div class="form-actions">
-                <button type="submit" class="btn submit-btn">Create</button>
-                <button type="button" class="btn cancel-btn" (click)="cancelCreate()">Cancel</button>
+                <button type="submit" class="btn">Create</button>
+                <button type="button" class="btn btn-cancel" (click)="cancelCreate()">Cancel</button>
             </div>
         </form>
     </div>
 
-    <!-- Edit Service Form -->
-    <div *ngIf="showEditForm && editService" class="service-form">
+    <!-- Edit Form -->
+    <div *ngIf="editService()" class="admin-form">
         <h3>Edit Service</h3>
         <form (ngSubmit)="updateService()">
-            <label>
-                Name:
-                <input type="text" [value]="editService.name" (input)="onEditInputChange($event, 'name')" required />
-            </label>
-            <label>
-                Description:
-                <textarea [value]="editService.description" (input)="onEditInputChange($event, 'description')"
+            <div class="form-group">
+                <label>Name:</label>
+                <input type="text" [value]="editService()?.name" (input)="onEditInputChange($event, 'name')" required />
+            </div>
+            <div class="form-group">
+                <label>Description:</label>
+                <textarea [value]="editService()?.description" (input)="onEditInputChange($event, 'description')"
                     required></textarea>
-            </label>
-            <label>
-                Price:
-                <input type="number" [value]="editService.price" (input)="onEditInputChange($event, 'price')" min="0"
+            </div>
+            <div class="form-group">
+                <label>Price:</label>
+                <input type="number" [value]="editService()?.price" (input)="onEditInputChange($event, 'price')" min="0"
                     step="0.01" required />
-            </label>
+            </div>
             <div class="form-actions">
-                <button type="submit" class="btn submit-btn">Update</button>
-                <button type="button" class="btn cancel-btn" (click)="cancelEdit()">Cancel</button>
+                <button type="submit" class="btn">Update</button>
+                <button type="button" class="btn btn-cancel" (click)="cancelEdit()">Cancel</button>
             </div>
         </form>
     </div>

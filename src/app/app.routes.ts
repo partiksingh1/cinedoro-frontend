@@ -11,13 +11,13 @@ import { UserRegistration } from './features/auth/register/register';
 import { DirectorListComponent } from './features/admin/directors/director-list.component';
 import { TicketComponent } from './features/tickets/tickets';
 import { MyBookingsComponent } from './features/my-bookings/my-bookings.component';
-import { hall } from './features/admin/hall/hall';
 import { Screenings } from './features/admin/screenings/screenings';
 import { CinemaServiceComponent } from './features/admin/cinema-service/cinema-service';
 import { ActorComponent } from './features/admin/actor/actor';
 import { AdminFilmCreateComponent } from './features/admin/films/film.create';
 import { AdminGenreComponent } from './features/admin/genres/admin-genre.component';
 import { Home } from './features/home/home';
+import { HallComponent } from './features/admin/hall/hall';
 export const routes: Routes = [
     { path: '', component: Home },
     { path: 'login', component: Login },
@@ -40,42 +40,18 @@ export const routes: Routes = [
     },
     {
         path: 'admin',
-        component: AdminComponent
-    },
-    {
-        path: 'admin/films',
-        component: AdminFilmListComponent
-    },
-    {
-        path: 'admin/halls',
-        component: hall
-    },
-    {
-        path: 'admin/genres',
-        component: AdminGenreComponent
-    },
-    {
-        path: 'admin/actors',
-        component: ActorComponent
-    },
-    {
-        path: 'admin/directors',
-        component: DirectorListComponent
-    },
-    {
-        path: 'admin/cinema-service',
-        component: CinemaServiceComponent
-    },
-    {
-        path: 'admin/films/create',
-        component: AdminFilmCreateComponent
-    },
-    {
-        path: 'admin/films/edit/:id',
-        component: AdminFilmListComponent
-    },
-    {
-        path: 'admin/screenings',
-        component: Screenings
+        component: AdminComponent,
+        children: [
+            { path: '', redirectTo: 'films', pathMatch: 'full' },
+            { path: 'films', component: AdminFilmListComponent },
+            { path: 'hall', component: HallComponent },
+            { path: 'genres', component: AdminGenreComponent },
+            { path: 'actors', component: ActorComponent },
+            { path: 'directors', component: DirectorListComponent },
+            { path: 'cinema-service', component: CinemaServiceComponent },
+            { path: 'films/create', component: AdminFilmCreateComponent },
+            { path: 'films/edit/:id', component: AdminFilmCreateComponent },
+            { path: 'screenings', component: Screenings }
+        ]
     }
 ];

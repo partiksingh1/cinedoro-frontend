@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CinemaServiceService as CinemaServiceApiService, CinemaService } from '../../../../app/services/cinema-service.service';
@@ -12,13 +12,13 @@ import { HttpClientModule } from '@angular/common/http';
   styleUrl: './cinema-service.css',
 })
 export class CinemaServiceComponent implements OnInit {
-  cinemaServices: CinemaService[] = [];
-  newService: Partial<CinemaService> = { name: '', description: '', price: 0 };
-  editService: Partial<CinemaService> | null = null;
-  editingServiceId: number | null = null;
-  showCreateForm: boolean = false;
-  showEditForm: boolean = false;
-  loading: boolean = true;
+
+  // Signals
+  cinemaServices = signal<any[]>([]);
+  loading = signal<boolean>(true);
+
+  newService = signal<Partial<CinemaService>>({ name: '', description: '', price: 0 });
+  editService = signal<Partial<CinemaService> | null>(null);
 
   constructor(private cinemaServiceApiService: CinemaServiceApiService) { }
 
@@ -27,100 +27,78 @@ export class CinemaServiceComponent implements OnInit {
   }
 
   getAllCinemaServices(): void {
+    this.loading.set(true);
     this.cinemaServiceApiService.getAllServices().subscribe({
-      next: (data) => {
-        this.cinemaServices = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error fetching cinema services', err);
-        this.loading = false;
-      },
+      next: (data) => this.cinemaServices.set(data),
+      error: (err) => console.error('Error fetching cinema services', err),
+      complete: () => this.loading.set(false)
     });
   }
 
   showCreateServiceForm(): void {
-    this.showCreateForm = true;
-    this.newService = { name: '', description: '', price: 0 }; // Reset form
+    this.newService.set({ name: '', description: '', price: 0 });
   }
 
   cancelCreate(): void {
-    this.showCreateForm = false;
+    this.newService.set({ name: '', description: '', price: 0 });
   }
 
   createService(): void {
-    if (this.newService.name && this.newService.description && this.newService.price !== undefined) {
-      // The createService method is missing in the CinemaServiceService, so we'll need to add it.
-      // For now, let's just log and simulate success.
-      console.log('Attempting to create service', this.newService);
-      // Simulate API call and refresh list
-      this.cinemaServiceApiService.createService(this.newService as CinemaService).subscribe({
-        next: (service) => {
-          console.log('Service created', service);
-          this.getAllCinemaServices();
-          this.cancelCreate();
-        },
-        error: (err) => console.error('Error creating service', err),
-      });
-    }
+    const service = this.newService();
+    if (!service.name || !service.description || service.price === undefined) return;
+
+    this.cinemaServiceApiService.createService(service as CinemaService).subscribe({
+      next: (res) => {
+        this.cinemaServices.set([...this.cinemaServices(), res]);
+        this.cancelCreate();
+      },
+      error: (err) => console.error('Error creating service', err)
+    });
   }
 
   showEditServiceForm(service: CinemaService): void {
-    this.editService = { ...service }; // Create a copy for editing
-    this.editingServiceId = service.id!;
-    this.showEditForm = true;
+    this.editService.set({ ...service });
   }
 
   cancelEdit(): void {
-    this.showEditForm = false;
-    this.editService = null;
-    this.editingServiceId = null;
+    this.editService.set(null);
   }
 
   onEditInputChange(event: Event, field: 'name' | 'description' | 'price'): void {
-    if (this.editService) {
-      const value = (event.target as HTMLInputElement).value;
-      if (field === 'price') {
-        this.editService.price = parseFloat(value);
-      } else if (field === 'name') {
-        this.editService.name = value;
-      } else {
-        this.editService.description = value;
-      }
-    }
+    const current = this.editService();
+    if (!current) return;
+
+    const value = (event.target as HTMLInputElement).value;
+    const updated = { ...current };
+
+    if (field === 'price') updated.price = parseFloat(value);
+    else if (field === 'name') updated.name = value;
+    else updated.description = value;
+
+    this.editService.set(updated);
   }
 
   updateService(): void {
-    if (this.editService && this.editService.id) {
-      // The updateService method is missing in the CinemaServiceService, so we'll need to add it.
-      // For now, let's just log and simulate success.
-      console.log('Attempting to update service', this.editService);
-      // Simulate API call and refresh list
-      // this.cinemaServiceApiService.updateService(this.editService.id, this.editService as CinemaService).subscribe({
-      //   next: (service) => {
-      //     console.log('Service updated', service);
-      //     this.getAllCinemaServices();
-      //     this.cancelEdit();
-      //   },
-      //   error: (err) => console.error('Error updating service', err),
-      // });
-      this.getAllCinemaServices();
-      this.cancelEdit();
-    }
+    const service = this.editService();
+    if (!service || !service.id) return;
+
+    this.cinemaServiceApiService.updateService(service.id, service as CinemaService).subscribe({
+      next: (updated) => {
+        const updatedList = this.cinemaServices().map(s => s.id === updated.id ? updated : s);
+        this.cinemaServices.set(updatedList);
+        this.cancelEdit();
+      },
+      error: (err) => console.error('Error updating service', err)
+    });
   }
 
   deleteService(id: number): void {
-    // The deleteService method is missing in the CinemaServiceService, so we'll need to add it.
-    // For now, let's just log and simulate success.
-    console.log('Attempting to delete service', id);
-    // Simulate API call and refresh list
-    // this.cinemaServiceApiService.deleteService(id).subscribe({
-    //   next: () => {
-    //     console.log('Service deleted', id);
-    //     this.getAllCinemaServices();
-    //   },
-    //   error: (err) => console.error('Error deleting service', err),
-    // });
-    this.getAllCinemaServices();
+    this.cinemaServiceApiService.deleteService(id).subscribe({
+      next: () => {
+        const updatedList = this.cinemaServices().filter(s => s.id !== id);
+        this.cinemaServices.set(updatedList);
+      },
+      error: (err) => console.error('Error deleting service', err)
+    });
   }
 }

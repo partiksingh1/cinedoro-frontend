@@ -1,84 +1,89 @@
-<div class="actor-container">
-    <h2>Actors</h2>
+<div class="admin-container">
+    <div class="header">
+        <h1 class="title">Manage Actors</h1>
+    </div>
 
     <!-- Loading -->
-    <div *ngIf="loading" class="loading">Loading actors...</div>
+    <div *ngIf="loading()" class="loading">Loading actors...</div>
 
     <!-- Actor List -->
-    <div *ngIf="!loading && actors.length > 0">
-        <table class="actors-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Surname</th>
-                    <th>Birthdate</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let actor of actors">
-                    <td>{{ actor.firstName }}</td>
-                    <td>{{ actor.lastName }}</td>
-                    <td>{{ actor.birthdate | date:'yyyy-MM-dd' }}</td>
-                    <td>
-                        <button class="btn edit-btn" (click)="showEditActorForm(actor)">Edit</button>
-                        <button class="btn delete-btn" (click)="deleteActor(actor.id!)">Delete</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div *ngIf="!loading()">
+        <div *ngIf="actors().length; else noActors">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Surname</th>
+                        <th>Birthdate</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let actor of actors()">
+                        <td>{{ actor.firstName }}</td>
+                        <td>{{ actor.lastName }}</td>
+                        <td>{{ actor.birthdate | date:'yyyy-MM-dd' }}</td>
+                        <td>
+                            <button class="btn btn-edit" (click)="showEditActorForm(actor)">Edit</button>
+                            <button class="btn btn-delete" (click)="deleteActor(actor.id!)">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <ng-template #noActors>
+            <div class="no-data">
+                <p>No actors found.</p>
+            </div>
+        </ng-template>
     </div>
-
-    <div *ngIf="!loading && actors.length === 0">
-        <p>No actors found.</p>
-    </div>
-
-    <!-- Create Actor Button -->
-    <button class="btn create-btn" *ngIf="!showCreateForm" (click)="showCreateActorForm()">Add Actor</button>
 
     <!-- Create Actor Form -->
-    <div *ngIf="showCreateForm" class="actor-form">
+    <div class="text-center">
+        <button class="btn" (click)="showCreateActorForm()">Add Actor</button>
+    </div>
+
+    <div *ngIf="newActor()" class="admin-form">
         <h3>Create Actor</h3>
         <form (ngSubmit)="createActor()">
-            <label>
-                Name:
-                <input type="text" [(ngModel)]="newActor.firstName" name="name" required />
-            </label>
-            <label>
-                Surname:
-                <input type="text" [(ngModel)]="newActor.lastName" name="surname" required />
-            </label>
-            <label>
-                Birthdate:
-                <input type="date" [(ngModel)]="newActor.birthdate" name="birthdate" />
-            </label>
+            <div class="form-group">
+                <label>Name:</label>
+                <input type="text" [(ngModel)]="newActor().firstName" name="name" required />
+            </div>
+            <div class="form-group">
+                <label>Surname:</label>
+                <input type="text" [(ngModel)]="newActor().lastName" name="surname" required />
+            </div>
+            <div class="form-group">
+                <label>Birthdate:</label>
+                <input type="date" [(ngModel)]="newActor().birthdate" name="birthdate" />
+            </div>
             <div class="form-actions">
-                <button type="submit" class="btn submit-btn">Create</button>
-                <button type="button" class="btn cancel-btn" (click)="cancelCreate()">Cancel</button>
+                <button type="submit" class="btn">Create</button>
+                <button type="button" class="btn btn-cancel" (click)="cancelCreate()">Cancel</button>
             </div>
         </form>
     </div>
 
     <!-- Edit Actor Form -->
-    <div *ngIf="showEditForm && editActor" class="actor-form">
+    <div *ngIf="editingActor()" class="admin-form">
         <h3>Edit Actor</h3>
         <form (ngSubmit)="updateActor()">
-            <label>
-                Name:
-                <input type="text" [value]="editActor.firstName" (input)="onEditInputChange($event,'name')" required />
-            </label>
-            <label>
-                Surname:
-                <input type="text" [value]="editActor.lastName" (input)="onEditInputChange($event,'surname')"
-                    required />
-            </label>
-            <label>
-                Birthdate:
-                <input type="date" [value]="editActor.birthdate" (input)="onEditInputChange($event,'birthdate')" />
-            </label>
+            <div class="form-group">
+                <label>Name:</label>
+                <input type="text" [(ngModel)]="editingActor()!.firstName" name="editName" required />
+            </div>
+            <div class="form-group">
+                <label>Surname:</label>
+                <input type="text" [(ngModel)]="editingActor()!.lastName" name="editSurname" required />
+            </div>
+            <div class="form-group">
+                <label>Birthdate:</label>
+                <input type="date" [(ngModel)]="editingActor()!.birthdate" name="editBirthdate" />
+            </div>
             <div class="form-actions">
-                <button type="submit" class="btn submit-btn">Update</button>
-                <button type="button" class="btn cancel-btn" (click)="cancelEdit()">Cancel</button>
+                <button type="submit" class="btn">Update</button>
+                <button type="button" class="btn btn-cancel" (click)="cancelEdit()">Cancel</button>
             </div>
         </form>
     </div>

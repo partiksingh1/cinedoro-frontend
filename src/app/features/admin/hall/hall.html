@@ -1,73 +1,80 @@
-<div class="admin-hall-container">
-    <h2>Manage Halls</h2>
-
-    <!-- Loading Indicator -->
-    <div *ngIf="loading" class="loading">
-        Loading halls...
+<div class="admin-container">
+    <!-- Header -->
+    <div class="header">
+        <h1 class="title">Manage Halls</h1>
     </div>
 
-    <!-- No Halls Found Message -->
-    <div *ngIf="!loading && halls.length === 0" class="no-halls-message">
-        <p>No halls found. Create one to get started!</p>
+    <!-- Create Button (only if not editing or creating) -->
+    <div class="text-center" *ngIf="!showCreateForm() && !editingHall()">
+        <button class="btn" (click)="showCreateHallForm()">Create New Hall</button>
     </div>
-
-    <!-- Create New Hall Button -->
-    <button *ngIf="!showCreateForm && !showEditForm" (click)="showCreateHallForm()" class="create-btn">
-        Create New Hall
-    </button>
 
     <!-- Create Hall Form -->
-    <div *ngIf="showCreateForm" class="form-card">
+    <div *ngIf="showCreateForm()" class="admin-form">
         <h3>Create New Hall</h3>
         <form (ngSubmit)="createHall()">
             <div class="form-group">
                 <label for="newName">Hall Name:</label>
-                <input id="newName" [(ngModel)]="newHall.name" name="newName" required />
+                <input id="newName" [(ngModel)]="newHall().name" name="newName" required />
+                <div *ngIf="newHall().name === ''" class="error-msg">Name is required</div>
             </div>
+
             <div class="form-group">
                 <label for="newCapacity">Capacity:</label>
-                <input id="newCapacity" type="number" [(ngModel)]="newHall.capacity" name="newCapacity" required />
+                <input id="newCapacity" type="number" [(ngModel)]="newHall().capacity" name="newCapacity" required />
+                <div *ngIf="newHall().capacity <= 0" class="error-msg">Capacity must be greater than 0</div>
             </div>
+
             <div class="form-actions">
-                <button type="submit" class="save-btn">Create Hall</button>
-                <button type="button" (click)="cancelCreate()" class="cancel-btn">Cancel</button>
+                <button type="submit" class="btn">Create Hall</button>
+                <button type="button" class="btn btn-cancel" (click)="cancelCreate()">Cancel</button>
             </div>
         </form>
     </div>
 
-    <!-- Halls List -->
-    <div *ngIf="!loading && halls.length > 0" class="halls-list">
-        <h3>Existing Halls</h3>
-        <div *ngFor="let hall of halls" class="hall-card">
-            <div class="hall-info">
-                <h4>{{ hall.name }}</h4>
-                <p>Capacity: {{ hall.capacity }}</p>
-            </div>
-            <div class="hall-actions">
-                <button (click)="showEditHallForm(hall)" class="edit-btn">Edit</button>
-                <button (click)="deleteHall(hall.id!)" class="delete-btn">Delete</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Edit Hall Form -->
-    <div *ngIf="showEditForm && editHall" class="form-card">
+    <div *ngIf="editingHall()" class="admin-form">
         <h3>Edit Hall</h3>
         <form (ngSubmit)="updateHall()">
             <div class="form-group">
                 <label for="editName">Hall Name:</label>
-                <input id="editName" [ngModel]="editHall.name" (ngModelChange)="onEditInputChange($event, 'name')"
-                    name="editName" required />
+                <input id="editName" [(ngModel)]="editingHall()!.name" name="editName" required />
+                <div *ngIf="editingHall()!.name === ''" class="error-msg">Name is required</div>
             </div>
+
             <div class="form-group">
                 <label for="editCapacity">Capacity:</label>
-                <input id="editCapacity" type="number" [ngModel]="editHall.capacity"
-                    (ngModelChange)="onEditInputChange($event, 'capacity')" name="editCapacity" required />
+                <input id="editCapacity" type="number" [(ngModel)]="editingHall()!.capacity" name="editCapacity"
+                    required />
+                <div *ngIf="editingHall()!.capacity <= 0" class="error-msg">Capacity must be greater than 0</div>
             </div>
+
             <div class="form-actions">
-                <button type="submit" class="save-btn">Update Hall</button>
-                <button type="button" (click)="cancelEdit()" class="cancel-btn">Cancel</button>
+                <button type="submit" class="btn">Update Hall</button>
+                <button type="button" class="btn btn-cancel" (click)="cancelEdit()">Cancel</button>
             </div>
         </form>
+    </div>
+
+    <!-- Existing Halls -->
+    <div *ngIf="halls().length > 0">
+        <h3 class="sub-title">Existing Halls</h3>
+        <div class="card-grid">
+            <div *ngFor="let hall of halls()" class="admin-card">
+                <div class="card-content">
+                    <h4>{{ hall.name }}</h4>
+                    <p>Capacity: {{ hall.capacity }}</p>
+                </div>
+                <div class="card-actions">
+                    <button class="btn btn-edit" (click)="startEditing(hall)">Edit</button>
+                    <button class="btn btn-delete" (click)="deleteHall(hall.id)">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- No Halls Message -->
+    <div *ngIf="halls().length === 0 && !showCreateForm() && !editingHall()" class="no-data">
+        <p>No halls found. Create one to get started!</p>
     </div>
 </div>

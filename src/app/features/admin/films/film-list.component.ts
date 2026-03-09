@@ -10,7 +10,8 @@ import { FormsModule } from '@angular/forms';
     standalone: true,
     selector: 'app-admin-film-list',
     imports: [CommonModule, RouterModule, FormsModule],
-    templateUrl: './film-list.component.html'
+    templateUrl: './film-list.component.html',
+    styleUrl: './film-list.component.css'
 })
 export class AdminFilmListComponent {
 

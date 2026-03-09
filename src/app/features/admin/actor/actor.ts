@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Actor, ActorService } from '../../../../app/services/actor.service';
@@ -12,13 +12,13 @@ import { HttpClientModule } from '@angular/common/http';
   styleUrls: ['./actor.css'],
 })
 export class ActorComponent implements OnInit {
-  actors: Actor[] = [];
-  newActor: Partial<Actor> = { firstName: '', lastName: '', birthdate: '' };
-  editActor: Partial<Actor> | null = null;
-  editingActorId: number | null = null;
-  showCreateForm = false;
-  showEditForm = false;
-  loading = true;
+
+  // Reactive signals
+  actors = signal<any[]>([]);
+  loading = signal<boolean>(true);
+
+  newActor = signal<Partial<Actor>>({ firstName: '', lastName: '', birthdate: '' });
+  editingActor = signal<Partial<Actor> | null>(null);
 
   constructor(private actorService: ActorService) { }
 
@@ -26,76 +26,72 @@ export class ActorComponent implements OnInit {
     this.loadActors();
   }
 
+  // Load all actors
   loadActors(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.actorService.getAllActors().subscribe({
-      next: (data) => {
-        this.actors = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error fetching actors', err);
-        this.loading = false;
-      },
+      next: (data) => this.actors.set(data),
+      error: (err) => console.error('Error fetching actors:', err),
+      complete: () => this.loading.set(false)
     });
   }
 
+  // Show create form
   showCreateActorForm(): void {
-    this.showCreateForm = true;
-    this.newActor = { firstName: '', lastName: '', birthdate: '' };
+    this.newActor.set({ firstName: '', lastName: '', birthdate: '' });
   }
 
+  // Cancel create
   cancelCreate(): void {
-    this.showCreateForm = false;
+    this.newActor.set({ firstName: '', lastName: '', birthdate: '' });
   }
 
+  // Create new actor
   createActor(): void {
-    if (this.newActor.firstName && this.newActor.lastName) {
-      this.actorService.createActor(this.newActor as Actor).subscribe({
-        next: () => {
-          this.loadActors();
-          this.cancelCreate();
-        },
-        error: (err) => console.error('Error creating actor', err),
-      });
-    }
+    const actor = this.newActor();
+    if (!actor.firstName || !actor.lastName) return;
+
+    this.actorService.createActor(actor as Actor).subscribe({
+      next: (res) => {
+        this.actors.set([...this.actors(), res]);
+        this.cancelCreate();
+      },
+      error: (err) => console.error('Error creating actor:', err)
+    });
   }
 
+  // Show edit form
   showEditActorForm(actor: Actor): void {
-    this.editActor = { ...actor };
-    this.editingActorId = actor.id!;
-    this.showEditForm = true;
+    this.editingActor.set({ ...actor });
   }
 
+  // Cancel edit
   cancelEdit(): void {
-    this.showEditForm = false;
-    this.editActor = null;
-    this.editingActorId = null;
+    this.editingActor.set(null);
   }
 
-  onEditInputChange(event: Event, field: 'name' | 'surname' | 'birthdate'): void {
-    if (this.editActor) {
-      const value = (event.target as HTMLInputElement).value;
-      (this.editActor as any)[field] = value;
-    }
-  }
-
+  // Update actor
   updateActor(): void {
-    if (this.editActor && this.editingActorId) {
-      this.actorService.updateActor(this.editingActorId, this.editActor as Actor).subscribe({
-        next: () => {
-          this.loadActors();
-          this.cancelEdit();
-        },
-        error: (err) => console.error('Error updating actor', err),
-      });
-    }
+    const actor = this.editingActor();
+    if (!actor || !actor.id) return;
+
+    this.actorService.updateActor(actor.id, actor as Actor).subscribe({
+      next: () => {
+        this.loadActors();
+        this.cancelEdit();
+      },
+      error: (err) => console.error('Error updating actor:', err)
+    });
   }
 
+  // Delete actor
   deleteActor(id: number): void {
     this.actorService.deleteActor(id).subscribe({
-      next: () => this.loadActors(),
-      error: (err) => console.error('Error deleting actor', err),
+      next: () => {
+        const updatedList = this.actors().filter(a => a.id !== id);
+        this.actors.set(updatedList);
+      },
+      error: (err) => console.error('Error deleting actor:', err)
     });
   }
 }

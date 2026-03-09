@@ -1,14 +1,25 @@
-<div class="genre-container">
-
-    <h2>Manage Genres</h2>
-
-    <div class="create-box">
-        <input type="text" placeholder="Genre name" [(ngModel)]="newGenre.name" />
-
-        <button (click)="createGenre()">Add Genre</button>
+<div class="admin-container">
+    <div class="header">
+        <h1 class="title">Manage Genres</h1>
     </div>
 
-    <table>
+    <!-- Create Genre Form -->
+    <div class="admin-form">
+        <h3>Add Genre</h3>
+        <form (ngSubmit)="createGenre()">
+            <div class="form-group">
+                <label>Genre Name</label>
+                <input type="text" placeholder="Genre name" [(ngModel)]="newGenre().name" name="genreName" required />
+            </div>
+            <div class="form-actions">
+                <button class="btn" type="submit">Add Genre</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Existing Genres Table -->
+    <h3 class="sub-title">Existing Genres</h3>
+    <table class="admin-table">
         <thead>
             <tr>
                 <th>ID</th>
@@ -16,20 +27,14 @@
                 <th>Actions</th>
             </tr>
         </thead>
-
         <tbody>
-            <tr *ngFor="let genre of genres">
-                <td>{{genre.id}}</td>
-                <td>{{genre.name}}</td>
-
+            <tr *ngFor="let genre of genres()">
+                <td>{{ genre.id }}</td>
+                <td>{{ genre.name }}</td>
                 <td>
-                    <button class="delete-btn" (click)="deleteGenre(genre.id)">
-                        Delete
-                    </button>
+                    <button class="btn btn-delete" (click)="deleteGenre(genre.id)">Delete</button>
                 </td>
             </tr>
         </tbody>
-
     </table>
-
 </div>
