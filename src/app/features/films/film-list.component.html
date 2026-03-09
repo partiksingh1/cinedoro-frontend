@@ -1,14 +1,10 @@
 <div class="wizard-container">
-
     <!-- Header -->
     <div class="header">
-
         <div class="search-bar">
             <input type="text" placeholder="Cerca film..." [(ngModel)]="searchQuery" />
-
             <button (click)="searchFilms()">Cerca</button>
         </div>
-
     </div>
 
     <!-- Films Grid -->
@@ -27,29 +23,16 @@
             <!-- Content -->
             <div class="film-content">
                 <h2 class="film-title">{{ film.title }}</h2>
-                <p class="film-description">{{ film.description }}</p>
+                <!-- <p class="film-description">{{ film.description }}</p>
 
-                <!-- Meta -->
                 <div class="film-meta">
-                    <span><i class="clock-icon">⏱</i> {{ film.durationMinutes }} min</span>
-                    <span><i class="calendar-icon">📅</i> {{ film.releaseDate | date:'yyyy' }}</span>
-                </div>
-                <!-- 
-                <div class="film-director">
-                    Regia di {{ film.director.firstName }} {{ film.director.lastName }}
+                    <span>⏱ {{ film.durationMinutes }} min</span>
+                    <span>📅 {{ film.releaseDate | date:'yyyy' }}</span>
                 </div> -->
 
-                <!-- Genres -->
                 <div class="genres">
                     <span class="genre-badge" *ngFor="let g of film.genres">{{ g.name }}</span>
                 </div>
-
-                <!-- Screenings -->
-                <!-- <div class="screenings">
-                    <div class="screening-chip" *ngFor="let s of film.screenings" [routerLink]="['/booking', s.id]">
-                        {{ s.screeningTime }}
-                    </div>
-                </div> -->
 
                 <button class="primary-btn" [routerLink]="['/screenings/film', film.id]">
                     Vedi tutte le proiezioni
@@ -57,5 +40,4 @@
             </div>
         </div>
     </section>
-
 </div>
