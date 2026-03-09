@@ -1,9 +1,9 @@
 <nav class="navbar">
     <div class="navbar-container">
 
-        <div class="logo">
+        <a routerLink="/" class="logo">
             🎬 CineDoro
-        </div>
+        </a>
 
         <ul class="nav-links">
             <li>
@@ -15,18 +15,21 @@
             <li>
                 <a routerLink="/my-bookings" routerLinkActive="active">My Bookings</a>
             </li>
-            <li>
-                <a routerLink="/profile" routerLinkActive="active">Profile</a>
-            </li>
-            <li *ngIf="isAdmin">
+            <li *ngIf="isAdmin()">
                 <a routerLink="/admin" routerLinkActive="active">Admin</a>
             </li>
         </ul>
 
         <div class="nav-right">
-            <a *ngIf="!authService.isLoggedIn()" routerLink="/login">Login</a>
-            <a *ngIf="!authService.isLoggedIn()" routerLink="/register">Registrati</a>
-            <button *ngIf="authService.isLoggedIn()" type="button" (click)="logout()">Logout</button>
+            <ng-container *ngIf="!authService.isLoggedIn(); else loggedIn">
+                <a routerLink="/login" class="btn btn-secondary">Login</a>
+                <a routerLink="/register" class="btn">Register</a>
+            </ng-container>
+
+            <ng-template #loggedIn>
+                <span class="user-name">Welcome, {{ userName() }}</span>
+                <button (click)="logout()" class="btn btn-logout">Logout</button>
+            </ng-template>
         </div>
 
     </div>

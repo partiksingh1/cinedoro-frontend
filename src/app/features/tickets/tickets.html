@@ -4,19 +4,20 @@
         <p class="ticket-success">Your tickets have been successfully reserved.</p>
     </div>
 
-    <div *ngIf="loading" class="loading">
+    <div *ngIf="loading()" class="loading">
         <p>Loading your ticket information...</p>
     </div>
 
-    <div *ngIf="errorMessage && !loading" class="error">
-        <p>{{ errorMessage }}</p>
+    <div *ngIf="errorMessage() && !loading()" class="error">
+        <p>{{ errorMessage() }}</p>
     </div>
 
-    <div *ngIf="!loading && !errorMessage && (ticketData$ | async) as data" class="ticket-details">
+    <div *ngIf="!loading() && !errorMessage() && ticketData()" class="ticket-details">
+
         <!-- Booking Reference -->
         <div class="booking-reference">
             <h2>Booking Reference</h2>
-            <div class="reference-code">{{ bookingId }}</div>
+            <div class="reference-code">{{ bookingId() }}</div>
             <p>Please show this ID at the cinema entrance</p>
         </div>
 
@@ -24,7 +25,7 @@
         <div class="tickets-section">
             <h2>Your Tickets</h2>
             <div class="tickets-grid">
-                <div *ngFor="let ticket of data.tickets" class="ticket-card">
+                <div *ngFor="let ticket of ticketList()" class="ticket-card">
                     <div class="ticket-header-mini">
                         <span class="ticket-id">Ticket #{{ ticket.id }}</span>
                     </div>
@@ -40,9 +41,9 @@
         <div class="booking-summary">
             <h2>Booking Summary</h2>
             <div class="summary-details">
-                <p><strong>Number of Tickets:</strong> {{ data.tickets.length }}</p>
-                <p><strong>Selected Seats:</strong> {{ data.seatNumbers }}</p>
-                <p class="total"><strong>Total Amount:</strong> {{ data.totalPrice | currency }}</p>
+                <p><strong>Number of Tickets:</strong> {{ ticketList().length }}</p>
+                <p><strong>Selected Seats:</strong> {{ seatNumbers() }}</p>
+                <p class="total"><strong>Total Amount:</strong> {{ totalPrice() | currency }}</p>
             </div>
         </div>
 

@@ -116,3 +116,39 @@
   background: #d4af37;
   color: #450a0a;
 }
+
+.user-name {
+  font-weight: 500;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid #f8e9d2;
+  color: #f8e9d2;
+}
+
+.btn-secondary:hover {
+  background: #f8e9d2;
+  color: #450a0a;
+}
+
+.btn-logout {
+  border: 1px solid #d4af37;
+  background: transparent;
+  color: white;
+}
+
+.btn-logout:hover {
+  background: #d4af37;
+  color: #450a0a;
+}

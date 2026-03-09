@@ -1,16 +1,14 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, computed, effect, signal } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { BookingService } from '../../services/booking.service'
-import { TicketService } from '../../services/ticket.service'
-import { Ticket } from '../../services/ticket.service'
+import { TicketService, Ticket } from '../../services/ticket.service'
 import { CommonModule } from '@angular/common'
-import { Observable } from 'rxjs'
 
 interface TicketViewModel {
-  bookingId: number;
-  totalPrice: number;
-  tickets: Ticket[];
-  seatNumbers: string;
+  bookingId: number
+  totalPrice: number
+  tickets: Ticket[]
+  seatNumbers: string
 }
 
 @Component({
@@ -20,12 +18,13 @@ interface TicketViewModel {
   standalone: true,
   imports: [CommonModule]
 })
-export class TicketComponent implements OnInit {
+export class TicketComponent {
 
-  bookingId!: number
-  ticketData$!: Observable<TicketViewModel>
-  loading = true
-  errorMessage = ''
+  // Signals
+  bookingId = signal<number | null>(null)
+  ticketData = signal<TicketViewModel | null>(null)
+  loading = signal<boolean>(true)
+  errorMessage = signal<string>('')
 
   constructor(
     private route: ActivatedRoute,
@@ -35,48 +34,50 @@ export class TicketComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.bookingId =
-      Number(this.route.snapshot.paramMap.get('bookingId'))
-
-    if (!this.bookingId) {
-      this.errorMessage = 'Invalid booking ID'
+    const id = Number(this.route.snapshot.paramMap.get('bookingId'))
+    if (!id) {
+      this.errorMessage.set('Invalid booking ID')
+      this.loading.set(false)
       return
     }
 
-    // Load booking and tickets
-    this.bookingService.getBookingById(this.bookingId).subscribe({
+    this.bookingId.set(id)
+    this.loadTickets(id)
+  }
+
+  private loadTickets(id: number) {
+    this.loading.set(true)
+    this.errorMessage.set('')
+
+    this.bookingService.getBookingById(id).subscribe({
       next: booking => {
-        this.ticketService.getTicketsByBooking(this.bookingId).subscribe({
+        this.ticketService.getTicketsByBooking(id).subscribe({
           next: tickets => {
             const seatNumbers = tickets.map(t => `Seat ${t.seatId}`).join(', ')
-            this.ticketData$ = new Observable(observer => {
-              observer.next({
-                bookingId: booking.id,
-                totalPrice: booking.totalPrice,
-                tickets: tickets,
-                seatNumbers: seatNumbers
-              })
-              observer.complete()
+            this.ticketData.set({
+              bookingId: booking.id,
+              totalPrice: booking.totalPrice,
+              tickets: tickets,
+              seatNumbers: seatNumbers
             })
-            this.loading = false
+            this.loading.set(false)
           },
           error: err => {
-            this.errorMessage = 'Failed to load ticket information'
-            this.loading = false
             console.error('Error loading tickets', err)
+            this.errorMessage.set('Failed to load ticket information')
+            this.loading.set(false)
           }
         })
       },
       error: err => {
-        this.errorMessage = 'Failed to load booking information'
-        this.loading = false
         console.error('Error loading booking', err)
+        this.errorMessage.set('Failed to load booking information')
+        this.loading.set(false)
       }
     })
   }
 
   downloadTickets() {
-    // In a real app, this would generate a PDF or similar
     alert('Download ticket functionality would be implemented here')
   }
 
@@ -88,4 +89,8 @@ export class TicketComponent implements OnInit {
     this.router.navigate(['/film'])
   }
 
+  // Computed helpers for template
+  ticketList = computed(() => this.ticketData()?.tickets || [])
+  seatNumbers = computed(() => this.ticketData()?.seatNumbers || '')
+  totalPrice = computed(() => this.ticketData()?.totalPrice || 0)
 }

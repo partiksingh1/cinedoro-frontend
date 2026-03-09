@@ -40,7 +40,7 @@ export class Login {
       )
       .subscribe({
         next: (response: any) => {
-          if (response.user?.role === 'admin') {
+          if (response.role === 'admin') {
             void this.router.navigate(['/admin']);
             return;
           }
