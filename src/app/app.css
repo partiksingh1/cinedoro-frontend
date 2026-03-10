@@ -1,3 +1,119 @@
-* {
+/* SPLASH BACKGROUND */
+
+.splash {
+  position: fixed;
   inset: 0;
+  background: radial-gradient(circle at center, #1f2937 0%, #020617 70%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+/* LIGHT EFFECT */
+
+.splash::before {
+  content: "";
+  position: absolute;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(255,255,255,0.12), transparent 70%);
+  animation: lightPulse 2.5s ease forwards;
+}
+
+/* LOGO WRAPPER */
+
+.logo-wrapper {
+  z-index: 2;
+}
+
+/* LOGO */
+
+.splash-logo {
+  width: 220px;
+  opacity: 0;
+  animation: logoIntro 2.4s cubic-bezier(.2,.8,.2,1) forwards;
+}
+
+/* LOGO ANIMATION */
+
+@keyframes logoIntro {
+
+  0% {
+    transform: scale(0.4) rotate(-6deg);
+    opacity: 0;
+    filter: blur(10px);
+  }
+
+  40% {
+    opacity: 1;
+    filter: blur(0);
+  }
+
+  100% {
+    transform: scale(3);
+    opacity: 1;
+  }
+
+}
+
+/* LIGHT ANIMATION */
+
+@keyframes lightPulse {
+
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  50% {
+    opacity: .6;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+
+}
+
+/* FADE OUT */
+
+.fade-out {
+  animation: splashFade 0.8s ease forwards;
+}
+
+@keyframes splashFade {
+
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+
+}
+
+/* SITE REVEAL */
+
+.site {
+  animation: siteReveal 0.6s ease;
+}
+
+@keyframes siteReveal {
+
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+
 }

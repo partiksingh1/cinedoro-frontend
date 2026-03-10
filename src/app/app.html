@@ -1,7 +1,19 @@
-<app-navbar></app-navbar>
+<!-- SPLASH -->
+<div class="splash" *ngIf="showSplash" [class.fade-out]="fadeOut">
 
-<div class="container">
-  <router-outlet></router-outlet>
+  <div class="logo-wrapper">
+    <img src="logo.png" class="splash-logo" />
+  </div>
 
+</div>
+
+<!-- SITE -->
+<div class="site" *ngIf="!showSplash">
+
+  <app-navbar></app-navbar>
+
+  <div class="container">
+    <router-outlet></router-outlet>
+  </div>
 
 </div>
